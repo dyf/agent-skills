@@ -1,0 +1,9 @@
+name: check
+on: [push, pull_request]
+jobs:
+  agents-md:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run scripts/build_agents_md.py --check

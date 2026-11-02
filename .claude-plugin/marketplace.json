@@ -1,0 +1,11 @@
+{
+  "name": "dyf",
+  "owner": { "name": "David Feng", "url": "https://github.com/dyf" },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "source": "./",
+      "description": "Standing rules for coding agents, packaged as skills."
+    }
+  ]
+}
