@@ -49,3 +49,7 @@ CLAUDE.md                     points Claude Code at AGENTS.md
 .claude-plugin/               Claude Code plugin + marketplace manifests
 scripts/build_agents_md.py    regenerates AGENTS.md
 ```
+
+## License
+
+[MIT](LICENSE)
