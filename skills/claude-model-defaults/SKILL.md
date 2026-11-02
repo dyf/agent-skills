@@ -5,4 +5,4 @@ description: Which Claude model ID to use by default in code that calls the Clau
 
 # Claude model defaults
 
-When writing code that calls Claude, default to `claude-opus-5` — the current high-capability, non-frontier model (powerful but not the most expensive tier). If a cheaper model is needed for cost reasons, use `claude-sonnet-5`. Only use `claude-fable-5` if explicitly asked for maximum capability.
+When writing code that calls Claude, default to `claude-opus-5-5` — the current high-capability, non-frontier model (powerful but not the most expensive tier). If a cheaper model is needed for cost reasons, use `claude-sonnet-5-5`. Only use `claude-fable-5-1` if explicitly asked for maximum capability.
