@@ -8,7 +8,7 @@ description: Duties for jobs that run more than a couple of minutes (training, s
 Anything that runs for more than a couple of minutes (training, sampling, bulk downloads, large scores) is a long
 job, and both the job and the agent watching it have duties. Log lines follow the `logging` skill.
 
-- **The job logs progress about once a minute.** Each line is timestamped and says where the job is
+- **The job logs progress every 10–60 seconds.** Each line is timestamped and says where the job is
   in units the reader can convert into an ETA: `step 4500/8000`, `neurons 120/216`, bytes or rows done. Add the
   rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable
   from a hung one.
