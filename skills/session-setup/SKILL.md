@@ -35,18 +35,18 @@ For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rust
 
 ## Folder layout
 
-Session folders and tool repositories use the same layout at their root, except that tool repositories have no `data/`:
+Session folders and tool repositories use the same layout at their root, except that tool repositories have no `data/` or `outputs/`:
 
 | Path | Contents |
 |------|----------|
 | top level | code — scripts, notebooks, anything meant to be run or reviewed |
 | `PLAN.md` | the live plan (see below) |
 | `data/` | non-transient input data (gitignored). Session folders only |
-| `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored) |
+| `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored). Session folders only |
 | `experiments/<YYYYMMDD-slug>/` | outputs, logs, and `STATUS.md` of one experiment, per `experiment-log` (tracked; large files gitignored) |
 | `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored) |
 
-Data is not part of a tool repository. A tool reads its data from a location outside the repo (a session folder's `data/`, shared storage, a database) passed in by path or config, never from a path inside the repo.
+Data and run outputs are not part of a tool repository. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
 
 ## PLAN.md
 
