@@ -19,18 +19,18 @@ Make that transition deliberately, when the code needs to be reused, installed, 
 
 1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
 2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's `outputs/OUTPUTS.md`, which stays where it is as history.
-3. From then on, sessions interact with the tool: new experiment records and `STATUS.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
+3. From then on, sessions interact with the tool: new experiment records and `SUMMARY.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
 
 Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
 
 ## Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and status files (`OUTPUTS.md` and each `STATUS.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and status files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
-   printf "tmp/\ndata/\n.venv/\noutputs/**\n!outputs/**/\n!outputs/OUTPUTS.md\n!outputs/*/STATUS.md\n" > .gitignore
+   printf "tmp/\ndata/\n.venv/\noutputs/**\n!outputs/**/\n!outputs/OUTPUTS.md\n!outputs/*/SUMMARY.md\n" > .gitignore
    printf "# <slug>\n\n<what this task is for>\n" > README.md
    printf "# Plan\n\n<goal, approach, open questions, next steps>\n" > PLAN.md
    git add .gitignore README.md PLAN.md && git commit -m "chore: init session folder"
@@ -65,20 +65,20 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
 20261106-<slug>/
   README.md            purpose and usage (see `readme`)
   PLAN.md              this session's plan
-  .gitignore           tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and STATUS.md files
+  .gitignore           tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and SUMMARY.md files
   .venv/               uv environment (gitignored)
   *.py, *.ipynb        scripts and notebooks
   data/                input data (gitignored)
   outputs/
     OUTPUTS.md         index of the run folders, and the session's experiment log (tracked)
     20261106-<slug>/   one run's outputs and logs: a standard run, staged and verified per
-                       `data-safety`, or an experiment, which also has a tracked STATUS.md
+                       `data-safety`, or an experiment, which also has a tracked SUMMARY.md
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
 ```
 
 ### Session folder working on a tool
 
-The same, except there is no `STATUS.md`: experiment records live in the tool repo, and the session keeps only their data. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
+The same, except there is no `SUMMARY.md`: experiment records live in the tool repo, and the session keeps only their data. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
 
 ```
 20261106-<slug>/
@@ -111,7 +111,7 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
   tests/               tests
   experiments/
     EXPERIMENTS.md     experiment log, starting with a link back to the session OUTPUTS.md it grew from
-    20261106-<slug>/   one experiment's record: STATUS.md, configs, command, and a link to its data
+    20261106-<slug>/   one experiment's record: SUMMARY.md, configs, command, and a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```
 

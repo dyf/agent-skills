@@ -10,7 +10,7 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 | [data-contracts](skills/data-contracts/SKILL.md) | version every produced dataset, checkpoint, and result table; bump on breaking structure or meaning changes |
 | [logging](skills/logging/SKILL.md) | ISO 8601 timestamps, JSONL logs, timestamped status reports |
 | [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, progress logs, proactive monitoring and reporting |
-| [experiment-log](skills/experiment-log/SKILL.md) | `experiments/` folder: `EXPERIMENTS.md` index plus one results folder per experiment, each with a live `STATUS.md` |
+| [experiment-log](skills/experiment-log/SKILL.md) | `experiments/` folder: `EXPERIMENTS.md` index plus one results folder per experiment, each with a live `SUMMARY.md` |
 | [writing-style](skills/writing-style/SKILL.md) | plain prose, no Claudisms or padding |
 | [readme](skills/readme/SKILL.md) | every repo has a `README.md` covering its purpose and how to use it |
 | [python-uv](skills/python-uv/SKILL.md) | `uv` for all Python dependency and script work |

@@ -12,14 +12,14 @@ When experimenting on a model or an algorithm, keep a datestamped experiment log
   outputs/
     OUTPUTS.md
     20261106-lr-warmup/
-      STATUS.md
+      SUMMARY.md
   ```
 - **Session folder plus tool repository**: the log is the tool repo's `experiments/EXPERIMENTS.md`, with the records in `experiments/<slug>/`. The data stays in the session folder's `outputs/<slug>/`, under the same slug, and the session's `OUTPUTS.md` entry for the run links to the record in the tool repo.
   ```
   <tool>/experiments/            <session>/outputs/
     EXPERIMENTS.md                 OUTPUTS.md
     20261106-lr-warmup/            20261106-lr-warmup/
-      STATUS.md                      results, logs, checkpoints
+      SUMMARY.md                      results, logs, checkpoints
   ```
 
 ## Log entries
@@ -36,12 +36,12 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. The log summarizes; the folder holds the evidence.
 
-- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `STATUS.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `OUTPUTS.md` and `STATUS.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
-- **Session folder plus tool repository**: the tool repo's `experiments/<YYYYMMDD-slug>/` holds only the record: `STATUS.md`, configs, the exact command, and a link to the data. The data (results, logs, checkpoints, plots) goes in the session folder's `outputs/<YYYYMMDD-slug>/`, because data is not part of a tool repository.
+- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `SUMMARY.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `OUTPUTS.md` and `SUMMARY.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
+- **Session folder plus tool repository**: the tool repo's `experiments/<YYYYMMDD-slug>/` holds only the record: `SUMMARY.md`, configs, the exact command, and a link to the data. The data (results, logs, checkpoints, plots) goes in the session folder's `outputs/<YYYYMMDD-slug>/`, because data is not part of a tool repository.
 
-## STATUS.md
+## SUMMARY.md
 
-Each experiment folder has one `STATUS.md` that says where the experiment stands while it runs:
+Each experiment folder has one `SUMMARY.md` that says where the experiment stands while it runs:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
 - **Log entry**: a link to this experiment's entry in the log, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
@@ -49,10 +49,10 @@ Each experiment folder has one `STATUS.md` that says where the experiment stands
 - **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
 - **Preliminary interpretation**: what the results so far suggest, and how confident that is.
 
-`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into the log entry.
+`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `SUMMARY.md` and write the findings into the log entry.
 
 ## Upkeep
 
-- Commit often, as `git-workflow` requires: the entry when the experiment starts, `STATUS.md` as it changes, the findings when it ends. Don't hold the experiment back for one commit at the end.
+- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the findings when it ends. Don't hold the experiment back for one commit at the end.
 - Keep an experiment's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
