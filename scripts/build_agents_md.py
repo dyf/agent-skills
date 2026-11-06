@@ -21,6 +21,7 @@ ORDER = [
     "data-safety",
     "logging",
     "long-running-tasks",
+    "experiment-log",
     "writing-style",
     "claude-model-defaults",
     "python-uv",

@@ -13,4 +13,4 @@ All work on remote repositories happens on feature branches, never directly on `
 Common types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`
 
 - **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in both remote repositories and session working folders. Don't let significant work accumulate uncommitted.
-- **Keep published branches current**: once a feature branch is published (pushed to the remote), push every local commit to it as you make them, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
+- **Keep published branches current**: once a feature branch is published (pushed to the remote), push each local commit to it as you make it, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.

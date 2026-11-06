@@ -5,7 +5,7 @@ description: Keep a datestamped experiment log when experimenting on a model or 
 
 # Experiment log
 
-When experimenting on a model or an algorithm, keep a datestamped experiment log: `EXPERIMENTS.md` at the top level of the session working folder.
+When experimenting on a model or an algorithm, keep a datestamped experiment log: `EXPERIMENTS.md` at the top level of the session working folder, or of the project repo when the experiments live there.
 
 - One entry per experiment, newest last, headed `## YYYY-MM-DD HH:MM — <short title>`.
 - Each entry records what was tried and what happened:
