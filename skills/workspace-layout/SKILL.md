@@ -7,18 +7,18 @@ description: Where work lives — dated session folders by default, plus a tool 
 
 Decide first where the work belongs:
 
-- **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiments, data.
+- **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiment log, data.
 - **Session folder plus tool repository**: for work on a tool or model of your own that has its own repo (e.g. morphogen). Each session of work on the tool still gets its own session folder. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`; the data the session reads and writes lives in the session folder.
 - **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md` or the folder layouts below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ## From session to tool
 
-Tools grow out of session experiments. Work starts in a session folder, and the experiment structure (`experiments/`, `EXPERIMENTS.md`, `STATUS.md`, data) stays there until the code becomes a tool.
+Tools grow out of session experiments. Work starts in a session folder, and the experiment log (`outputs/EXPERIMENTS.md` and each experiment's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
 
 Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
 
 1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
-2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's experiment log, which stays where it is as history.
+2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's `outputs/EXPERIMENTS.md`, which stays where it is as history.
 3. From then on, sessions interact with the tool: new experiment records and `STATUS.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
 
 Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
@@ -26,11 +26,11 @@ Until that transition happens, there is no tool repository, and nothing goes any
 ## Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, `outputs/`, and `.venv/` gitignored, plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for experiment records (`EXPERIMENTS.md` and each `STATUS.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
-   printf "tmp/\ndata/\noutputs/\n.venv/\n" > .gitignore
+   printf "tmp/\ndata/\n.venv/\noutputs/**\n!outputs/**/\n!outputs/EXPERIMENTS.md\n!outputs/*/STATUS.md\n" > .gitignore
    printf "# <slug>\n\n<what this task is for>\n" > README.md
    printf "# Plan\n\n<goal, approach, open questions, next steps>\n" > PLAN.md
    git add .gitignore README.md PLAN.md && git commit -m "chore: init session folder"
@@ -51,39 +51,39 @@ For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rust
 
 These are the complete layouts. Beyond them, add only what the language or tooling expects (e.g. `uv.lock`, `docs/`, `.github/`).
 
+Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`.
+
 ### Session folder, on its own
 
 ```
 20261106-<slug>/
   README.md            purpose and usage (see `readme`)
   PLAN.md              this session's plan
-  .gitignore           tmp/, data/, outputs/, .venv/
+  .gitignore           tmp/, data/, .venv/, and outputs/ except experiment records
   .venv/               uv environment (gitignored)
   *.py, *.ipynb        scripts and notebooks
   data/                input data (gitignored)
   outputs/
-    20261106-<slug>/   outputs and logs of one standard run, staged and verified per `data-safety` (gitignored)
-  experiments/
-    EXPERIMENTS.md     experiment index (see `experiment-log`)
-    20261106-<slug>/   one experiment: STATUS.md, configs, command, results, logs, plots, checkpoints
-                       (tracked; large files gitignored)
+    EXPERIMENTS.md     experiment log (see `experiment-log`), tracked
+    20261106-<slug>/   one run's outputs and logs: a standard run, staged and verified per
+                       `data-safety`, or an experiment, which also has a tracked STATUS.md
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
 ```
 
 ### Session folder working on a tool
 
-The same, except there is no `experiments/`: experiment records live in the tool repo, and the session keeps only their data.
+The same, except there is no `outputs/EXPERIMENTS.md` and no `STATUS.md`: experiment records live in the tool repo, and the session keeps only their data.
 
 ```
 20261106-<slug>/
   README.md            purpose and usage, naming the tool and its version or commit
   PLAN.md              this session's task
-  .gitignore           tmp/, data/, outputs/, .venv/
+  .gitignore           tmp/, data/, .venv/, outputs/
   .venv/               uv environment with the tool installed (gitignored)
   *.py, *.ipynb        scripts and notebooks that drive the tool
   data/                input data the tool reads (gitignored)
   outputs/
-    20261106-<slug>/   outputs and logs of one run: a standard run, or one tool experiment's data,
+    20261106-<slug>/   one run's outputs and logs: a standard run, or one tool experiment's data,
                        named with the same slug as its record in the tool repo (gitignored)
   tmp/                 transient files (gitignored)
 ```
@@ -103,7 +103,7 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
   src/<package>/       package code
   tests/               tests
   experiments/
-    EXPERIMENTS.md     experiment index, starting with a link back to the session log it grew from
+    EXPERIMENTS.md     experiment log, starting with a link back to the session log it grew from
     20261106-<slug>/   one experiment's record: STATUS.md, configs, command, and a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```

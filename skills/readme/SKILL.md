@@ -12,4 +12,4 @@ It covers two things, at a high level:
 - **Purpose**: what the repository is for and what problem it solves, in a few sentences.
 - **Usage**: how to use it — how to set it up, the main commands or entry points to run, and what goes in and comes out.
 
-Keep it short. It is an orientation, not full documentation: link to deeper docs, `PLAN.md`, or `experiments/EXPERIMENTS.md` rather than repeating them. Update it in the same commit as any change to what the repo does or how it is used. Prose follows the `writing-style` rules.
+Keep it short. It is an orientation, not full documentation: link to deeper docs, `PLAN.md`, or the experiment log rather than repeating them. Update it in the same commit as any change to what the repo does or how it is used. Prose follows the `writing-style` rules.
