@@ -5,7 +5,7 @@ description: Keep a datestamped experiment log, with one folder per experiment f
 
 # Experiment log
 
-When experimenting on a model or an algorithm, keep all experiments under one top-level `experiments/` folder in the repo (or session working folder):
+When experimenting on a model or an algorithm, keep all experiments under one top-level `experiments/` folder at the root of the session folder or tool repository:
 
 ```
 experiments/

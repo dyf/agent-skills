@@ -3,7 +3,7 @@ name: python-uv
 description: Use uv for all Python dependency management, environments, and script execution — never pip or poetry. Use whenever installing Python packages, creating a virtual environment, or running a Python script.
 ---
 
-# Package management
+# Python uv
 
 - **Always use `uv`** for Python dependency management and script execution.
   - Install deps: `uv add <pkg>` (not `pip install`)

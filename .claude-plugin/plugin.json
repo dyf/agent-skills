@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
-  "description": "David Feng's standing rules for coding agents: session setup, git workflow, data safety, data contracts, logging, long-running jobs, experiment logs, writing style, READMEs, uv, Claude model defaults.",
-  "version": "0.2.4",
+  "description": "David Feng's standing rules for coding agents, packaged as skills.",
+  "version": "0.2.5",
   "author": { "name": "David Feng", "url": "https://github.com/dyf" },
   "repository": "https://github.com/dyf/agent-skills",
   "license": "MIT"
