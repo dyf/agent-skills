@@ -24,6 +24,16 @@ Decide first where the work belongs:
    ```
 3. Create a virtual environment: `uv venv .venv`
 
+### Tool repositories
+
+A tool repository is meant to be installed, imported, and maintained, so in addition to the folder layout below it follows the standard packaging and style conventions for its language. Use the ecosystem's usual project file, source layout, test location, and formatter/linter rather than inventing a structure. For Python:
+
+- `pyproject.toml` as the single project file, managed with `uv` (see `python-uv`); package code under `src/<package>/`, tests under `tests/`.
+- PEP 8 style, enforced with `ruff check` and `ruff format`; type hints on public functions.
+- Entry points declared in `pyproject.toml` (`[project.scripts]`), not ad-hoc scripts at the top level.
+
+For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rustfmt`/`clippy` for Rust, `go.mod` and `gofmt` for Go, `package.json` with ESLint and Prettier for TypeScript).
+
 ### Folder layout
 
 Session folders and tool repositories use the same layout at their root:

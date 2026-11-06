@@ -1,7 +1,7 @@
 {
   "name": "agent-skills",
   "description": "David Feng's standing rules for coding agents, packaged as skills.",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": { "name": "David Feng", "url": "https://github.com/dyf" },
   "repository": "https://github.com/dyf/agent-skills",
   "license": "MIT"

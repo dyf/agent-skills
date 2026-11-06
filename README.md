@@ -4,7 +4,7 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 
 | Skill | Covers |
 |-------|--------|
-| [session-setup](skills/session-setup/SKILL.md) | session folders vs tool repos, folder layout, `PLAN.md` |
+| [session-setup](skills/session-setup/SKILL.md) | session folders vs tool repos, packaging conventions, folder layout, `PLAN.md` |
 | [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit and push cadence |
 | [data-safety](skills/data-safety/SKILL.md) | no in-place overwrites, `--dry-run` / `--test-run` for database writes |
 | [data-contracts](skills/data-contracts/SKILL.md) | version every produced dataset, checkpoint, and result table; bump on breaking structure or meaning changes |
