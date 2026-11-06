@@ -24,6 +24,7 @@ ORDER = [
     "long-running-tasks",
     "experiment-log",
     "writing-style",
+    "readme",
     "claude-model-defaults",
     "python-uv",
 ]

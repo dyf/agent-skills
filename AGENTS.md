@@ -31,8 +31,8 @@ At the start of each new session:
 Keep a `PLAN.md` at the top level of the session working folder. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
 - Update it whenever the plan changes, not after the fact.
-- Keep a pithy changelog at the top (one line per change, newest first) so it's easy to see how thinking evolved.
-- The rest of the file is the live plan: goal, approach, open questions, next steps.
+- No changelog. History lives in git and the experiment log, not in the plan.
+- The file is the live plan: goal, approach, open questions, next steps.
 
 ## Git workflow
 
@@ -168,6 +168,17 @@ Prose should be clear and precise. Avoid:
 - Padding: restatements, throat-clearing, meta-commentary about what you're about to say
 
 Unless the user asks for a particular tone, write plainly and directly.
+
+## README
+
+Every repository has a `README.md` at its root. If one is missing, create it.
+
+It covers two things, at a high level:
+
+- **Purpose**: what the repository is for and what problem it solves, in a few sentences.
+- **Usage**: how to use it — how to set it up, the main commands or entry points to run, and what goes in and comes out.
+
+Keep it short. It is an orientation, not full documentation: link to deeper docs, `PLAN.md`, or `experiments/EXPERIMENTS.md` rather than repeating them. Update it in the same commit as any change to what the repo does or how it is used. Prose follows the `writing-style` rules.
 
 ## Claude model defaults
 

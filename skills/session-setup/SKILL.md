@@ -30,5 +30,5 @@ At the start of each new session:
 Keep a `PLAN.md` at the top level of the session working folder. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
 - Update it whenever the plan changes, not after the fact.
-- Keep a pithy changelog at the top (one line per change, newest first) so it's easy to see how thinking evolved.
-- The rest of the file is the live plan: goal, approach, open questions, next steps.
+- No changelog. History lives in git and the experiment log, not in the plan.
+- The file is the live plan: goal, approach, open questions, next steps.

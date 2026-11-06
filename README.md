@@ -12,6 +12,7 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 | [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, per-minute progress, proactive monitoring and reporting |
 | [experiment-log](skills/experiment-log/SKILL.md) | `experiments/` folder: `EXPERIMENTS.md` index plus one results folder per experiment, each with a live `STATUS.md` |
 | [writing-style](skills/writing-style/SKILL.md) | plain prose, no Claudisms or padding |
+| [readme](skills/readme/SKILL.md) | every repo has a `README.md` covering its purpose and how to use it |
 | [python-uv](skills/python-uv/SKILL.md) | `uv` for all Python dependency and script work |
 | [claude-model-defaults](skills/claude-model-defaults/SKILL.md) | default model IDs for code that calls Claude |
 
