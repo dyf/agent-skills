@@ -31,6 +31,7 @@ Session folders and tool repositories use the same layout at their root:
 | Path | Contents |
 |------|----------|
 | top level | code — scripts, notebooks, anything meant to be run or reviewed |
+| `PLAN.md` | the live plan (see below) |
 | `data/` | non-transient input data (gitignored) |
 | `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored) |
 | `experiments/<YYYYMMDD-slug>/` | outputs, logs, and `STATUS.md` of one experiment, per `experiment-log` (tracked; large files gitignored) |
@@ -38,7 +39,7 @@ Session folders and tool repositories use the same layout at their root:
 
 ### PLAN.md
 
-Keep a `PLAN.md` at the top level of the session folder. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
+Keep a `PLAN.md` at the root of every session folder and tool repository. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
 - Update it whenever the plan changes, not after the fact.
 - No changelog. History lives in git and the experiment log, not in the plan.
