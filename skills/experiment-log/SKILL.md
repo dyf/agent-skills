@@ -41,6 +41,8 @@ Each experiment folder has one `STATUS.md` that says where the experiment stands
 
 `STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
 
+## Upkeep
+
 - Commit often, as `git-workflow` requires: the entry when the experiment starts, results and `STATUS.md` as they land, the findings when it ends. Don't hold the experiment back for one commit at the end.
 - Large files (checkpoints, big arrays) can be gitignored, but keep them in the folder so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.

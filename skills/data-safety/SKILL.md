@@ -16,4 +16,4 @@ Scripts that write to or modify a database must always support two safety modes:
 
 Implement these as CLI flags (`--dry-run`, `--test-run`) or environment variables. Make it impossible to accidentally run the full destructive path without explicitly opting out of dry run.
 
-When space permits, stage outputs to `outputs/<YYYYMMDD-slug>/` and verify them before committing destructive changes.
+When space permits, stage outputs (in a session folder, `outputs/<YYYYMMDD-slug>/`; for a tool, the output location it was given) and verify them before committing destructive changes.
