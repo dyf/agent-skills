@@ -5,7 +5,7 @@ description: Branch naming, Conventional Commits, and commit and push cadence ru
 
 # Git workflow
 
-All work on remote repositories happens on feature branches, never directly on `main` or `master`.
+In any repository with a remote, all work happens on feature branches, never directly on `main` or `master`. Session folders have no remote and commit to their default branch.
 
 - **Branch names**: follow conventional format — `<type>/<short-description>` (e.g. `feat/add-subject-validator`, `fix/missing-modality-field`, `chore/update-deps`)
 - **Commit messages**: use [Conventional Commits](https://www.conventionalcommits.org/) — `<type>(<scope>): <description>` (e.g. `feat(schema): add optional funder field`)

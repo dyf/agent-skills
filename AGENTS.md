@@ -36,7 +36,7 @@ Until that transition happens, there is no tool repository, and nothing goes any
    printf "# Plan\n\n<goal, approach, open questions, next steps>\n" > PLAN.md
    git add .gitignore README.md PLAN.md && git commit -m "chore: init session folder"
    ```
-3. Create a virtual environment: `uv venv .venv`
+3. Create the Python project and environment, so `uv add` works (see `python-uv`): `uv init --bare && uv venv`. Commit `pyproject.toml`, and `uv.lock` once it exists.
 
 ### Tool repositories
 
@@ -54,6 +54,8 @@ These are the complete layouts. Beyond them, add only what the language or tooli
 
 Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`, one folder per run, indexed by `outputs/OUTPUTS.md`.
 
+Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-<slug>`: the date the run started plus a 2–4 word kebab-case slug (e.g. `20261106-lr-warmup`). A tool experiment uses the same name for its record in the tool repo and its data in the session folder.
+
 #### Session folder, on its own
 
 ```
@@ -61,6 +63,8 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
   README.md            purpose and usage (see `readme`)
   PLAN.md              this session's plan
   .gitignore           tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and SUMMARY.md files
+  pyproject.toml       dependencies (from `uv init --bare`)
+  uv.lock              locked dependencies
   .venv/               uv environment (gitignored)
   *.py, *.ipynb        scripts and notebooks
   data/                input data (gitignored)
@@ -80,6 +84,8 @@ The same, except that a tool experiment's record and `SUMMARY.md` live in the to
   README.md            purpose and usage, naming the tool and its version or commit
   PLAN.md              this session's task
   .gitignore           same as above
+  pyproject.toml       dependencies, including the tool
+  uv.lock              locked dependencies
   .venv/               uv environment with the tool installed (gitignored)
   *.py, *.ipynb        scripts and notebooks that drive the tool
   data/                input data the tool reads (gitignored)
@@ -107,7 +113,7 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
   tests/               tests
   experiments/
     EXPERIMENTS.md     experiment log, starting with a link back to the session OUTPUTS.md it grew from
-    20261106-<slug>/   one experiment's record: SUMMARY.md, configs, command, and a link to its data
+    20261106-<slug>/   one experiment's record: SUMMARY.md and configs, with a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```
 
@@ -121,7 +127,7 @@ Each is a log: one brief entry per run folder, so a reader can scan what was don
 Each entry, newest last:
 
 - **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
-- **Title and link**: a one-line title and a link to the run's folder (for a tool experiment in `OUTPUTS.md`, to its record in the tool repo; in `EXPERIMENTS.md`, also to its data in the session folder).
+- **Title and link**: a one-line title and a link to the run's folder. For a tool experiment, the session's `OUTPUTS.md` entry links to the record in the tool repo, and the tool's `EXPERIMENTS.md` entry links to both the record and the data in the session folder.
 - **Purpose**: a sentence or two on what the run is for, or the question an experiment answers.
 - **Results**: a brief summary of what came of it and what it means, including negative and inconclusive results, and for an experiment, what to try next. While the run is going, write "running" and see `SUMMARY.md`.
 
@@ -129,7 +135,7 @@ Keep entries brief. Inputs, parameters, code, timing, and status belong in the r
 
 ### SUMMARY.md
 
-Every run folder has a `SUMMARY.md`: each `outputs/<YYYYMMDD-slug>/` in a session folder, and each `experiments/<YYYYMMDD-slug>/` in a tool repo (for a tool experiment, the summary lives with the record, not with the data). It is the one file a reader opens to understand a run, while it runs and after. It contains:
+Every run has exactly one `SUMMARY.md`. For a standard run or a session-only experiment, it is in the run's `outputs/<YYYYMMDD-slug>/`. For a tool experiment, it is with the record in the tool repo's `experiments/<YYYYMMDD-slug>/`, not with the data. It is the one file a reader opens to understand a run, while it runs and after. It contains:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
 - **Index entry**: a link to the run's entry in its index file, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
@@ -139,7 +145,7 @@ Every run folder has a `SUMMARY.md`: each `outputs/<YYYYMMDD-slug>/` in a sessio
 - **Status**: what has completed, what is still running or queued (with progress, e.g. `step 4500/8000`), and anything that failed. When the run ends, mark it finished or failed.
 - **Preliminary interpretation**: what the results so far suggest, and how confident that is.
 
-`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends.
+`SUMMARY.md`, `OUTPUTS.md`, and `EXPERIMENTS.md` are records, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply to them. Overwrite `SUMMARY.md` in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends. Commit it at milestones (start, stage done, end), not on every refresh.
 
 ### PLAN.md
 
@@ -156,7 +162,7 @@ When a session works on a tool, the two plans have different scopes:
 
 ## Git workflow
 
-All work on remote repositories happens on feature branches, never directly on `main` or `master`.
+In any repository with a remote, all work happens on feature branches, never directly on `main` or `master`. Session folders have no remote and commit to their default branch.
 
 - **Branch names**: follow conventional format — `<type>/<short-description>` (e.g. `feat/add-subject-validator`, `fix/missing-modality-field`, `chore/update-deps`)
 - **Commit messages**: use [Conventional Commits](https://www.conventionalcommits.org/) — `<type>(<scope>): <description>` (e.g. `feat(schema): add optional funder field`)
@@ -179,7 +185,7 @@ Scripts that write to or modify a database must always support two safety modes:
 
 Implement these as CLI flags (`--dry-run`, `--test-run`) or environment variables. Make it impossible to accidentally run the full destructive path without explicitly opting out of dry run.
 
-When space permits, stage outputs (in a session folder, `outputs/<YYYYMMDD-slug>/`; for a tool, the output location it was given) and verify them before committing destructive changes.
+When space permits, stage outputs in the run's `outputs/<YYYYMMDD-slug>/` and verify them before committing destructive changes.
 
 ## Data contracts
 
@@ -222,41 +228,23 @@ Anything that runs for more than a couple of minutes (training, sampling, bulk d
 
 ## Experiment log
 
-When experimenting on a model or an algorithm, keep a datestamped experiment log: an index file plus one folder per experiment. Where it lives depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
+When experimenting on a model or an algorithm, record every experiment: an entry in the log and a run folder with a `SUMMARY.md`. Where these live, and what each file contains, is defined in `workspace-layout`:
 
-- **Session folder only**: the log is the session's `outputs/OUTPUTS.md` (see `workspace-layout`), which indexes every run in `outputs/`, experiments included. Session folders have no `experiments/` folder.
-  ```
-  outputs/
-    OUTPUTS.md
-    20261106-lr-warmup/
-      SUMMARY.md
-  ```
-- **Session folder plus tool repository**: the log is the tool repo's `experiments/EXPERIMENTS.md`, with the records in `experiments/<slug>/`. The data stays in the session folder's `outputs/<slug>/`, under the same slug, and the session's `OUTPUTS.md` entry for the run links to the record in the tool repo.
-  ```
-  <tool>/experiments/            <session>/outputs/
-    EXPERIMENTS.md                 OUTPUTS.md
-    20261106-lr-warmup/            20261106-lr-warmup/
-      SUMMARY.md                      results, logs, checkpoints
-  ```
+- **Session folder only**: the log is `outputs/OUTPUTS.md`, and each experiment is a run folder in `outputs/`.
+- **Session folder plus tool repository**: the log is the tool repo's `experiments/EXPERIMENTS.md`, each experiment's record (`SUMMARY.md` and configs) is in `experiments/<YYYYMMDD-slug>/`, and its data is in the session folder's `outputs/<YYYYMMDD-slug>/`.
 
-### Log entries
+### What experiments add
 
-Each experiment gets one entry in the log (`OUTPUTS.md` or `EXPERIMENTS.md`), in the format defined in `workspace-layout` ("EXPERIMENTS.md and OUTPUTS.md"): heading, title and link, purpose, results. Write it when the experiment starts and add the results when it finishes.
+On top of the general rules for log entries and `SUMMARY.md`:
 
-### Experiment folders
-
-One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. The log summarizes; the folder holds the evidence.
-
-- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `SUMMARY.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `OUTPUTS.md` and `SUMMARY.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
-- **Session folder plus tool repository**: the tool repo's `experiments/<YYYYMMDD-slug>/` holds only the record: `SUMMARY.md`, configs, the exact command, and a link to the data. The data (results, logs, checkpoints, plots) goes in the session folder's `outputs/<YYYYMMDD-slug>/`, because data is not part of a tool repository.
-
-### SUMMARY.md
-
-Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). When the experiment finishes, also write the results into its log entry.
+- **Purpose** states the question or hypothesis the experiment tests.
+- **Results** include negative and inconclusive outcomes, not only wins, and say what to try next.
+- **Inputs, parameters, and code** in `SUMMARY.md` are specific enough to rerun the experiment: commit hash, full config, seed, and exact command.
+- Write the log entry when the experiment starts, not after it worked out.
 
 ### Upkeep
 
-- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the results when it ends. Don't hold the experiment back for one commit at the end.
+- Commit as `git-workflow` requires, at milestones: the log entry and `SUMMARY.md` when the experiment starts, `SUMMARY.md` when a stage finishes or something notable happens, and the results when it ends. Refreshing `SUMMARY.md` every ~10 minutes does not mean committing every ~10 minutes.
 - Keep an experiment's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 
