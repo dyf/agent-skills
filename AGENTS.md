@@ -4,12 +4,12 @@
 
 Workspace-level guidance for all agents. These are standing rules — follow them without being asked.
 
-## Session setup
+## Workspace layout
 
 Decide first where the work belongs:
 
 - **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiments, data.
-- **Session folder plus tool repository**: once a tool or model of your own has its own repo (e.g. morphogen), a session works with it. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`. The data it reads and writes lives in the session folder.
+- **Session folder plus tool repository**: for work on a tool or model of your own that has its own repo (e.g. morphogen). Each session of work on the tool still gets its own session folder. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`; the data the session reads and writes lives in the session folder.
 - **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ### From session to tool
@@ -19,7 +19,7 @@ Tools grow out of session experiments. Work starts in a session folder, and the 
 Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
 
 1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
-2. Start the tool repo's `experiments/EXPERIMENTS.md`. Its first entry links back to the session folder's experiment log, which stays where it is as history.
+2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's experiment log, which stays where it is as history.
 3. From then on, sessions interact with the tool: new experiment records and `STATUS.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
 
 Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
@@ -50,22 +50,27 @@ For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rust
 
 ### Folder layout
 
-Session folders and tool repositories use the same layout at their root, except that tool repositories have no `data/` or `outputs/`:
+Session folders and tool repositories use the same layout at their root, except that tool repositories have no `data/`, `outputs/`, or `tmp/`:
 
 | Path | Contents |
 |------|----------|
 | top level | code. In session folders: scripts and notebooks. In tool repositories: the language's standard layout (above) |
 | `PLAN.md` | the live plan (see below) |
 | `data/` | non-transient input data (gitignored). Session folders only |
-| `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored). Session folders only |
+| `outputs/<YYYYMMDD-slug>/` | outputs and logs of one run: a standard run, staged and verified per `data-safety`, or an experiment on a tool, whose record lives in the tool repo (gitignored). Session folders only |
 | `experiments/<YYYYMMDD-slug>/` | one experiment's record and `STATUS.md`, per `experiment-log`. In session folders it also holds the experiment's data (tracked; large files gitignored) |
-| `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored) |
+| `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored). Session folders only |
 
-Data and run outputs are not part of a tool repository, including experiment data. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
+Data, run outputs, and scratch files are not part of a tool repository, including experiment data. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/`, `outputs/`, and `tmp/`, shared storage, a database), passed in by path or config, never paths inside the repo.
 
 ### PLAN.md
 
 Keep a `PLAN.md` at the root of every session folder and every tool repository of your own. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
+
+When a session works on a tool, the two plans have different scopes:
+
+- The tool repo's `PLAN.md` is the tool's direction: goals, roadmap, open design questions. It outlives any one session.
+- The session folder's `PLAN.md` is this session's task: what we are doing now, and how it moves the tool's plan forward.
 
 - Update it whenever the plan changes, not after the fact.
 - No changelog. History lives in git and the experiment log, not in the plan.
@@ -80,7 +85,7 @@ All work on remote repositories happens on feature branches, never directly on `
 
 Common types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`
 
-- **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in both remote repositories and session folders. Don't let significant work accumulate uncommitted.
+- **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in every repository you work in, including session folders. Don't let significant work accumulate uncommitted.
 - **Keep published branches current**: once a feature branch is published (pushed to the remote), push each local commit to it as you make it, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
 
 ## Data safety
@@ -120,39 +125,21 @@ Data that code produces for later use — model weights and checkpoints, result 
 
 ## Logging
 
-- Write code so it always emits useful log messages that convey meaningful progress: what stage it is in and how
-  far through it (`rows 12000/50000`, `file 3/8`), not just "working..." or nothing at all. Log at whatever cadence
-  makes sense for the work, but prefer every 10–60 seconds — often enough to show the process is alive and moving,
-  rarely enough that the log stays readable.
-- Timestamp every log message (ISO 8601 wall-clock, not only elapsed seconds). Long runs are read back hours later;
-  "step 4500, t=2415" says nothing about when it happened or whether the process is still alive.
-- Prefer JSONL for logs that will be read by code: one JSON object per line, with `ts`, and the quantities as fields
-  rather than formatted into a string. Keep human-readable progress lines separate if they are needed at all.
-- Agents should timestamp their messages back to the user when reporting on running or completed work (e.g.
-  "09:12 — training at step 4500/8000"), so the user can tell how stale a status is and how long things took.
+- Write code so it always emits useful log messages that convey meaningful progress: what stage it is in and how far through it (`rows 12000/50000`, `file 3/8`), not just "working..." or nothing at all. Log at whatever cadence makes sense for the work, but prefer every 10–60 seconds — often enough to show the process is alive and moving, rarely enough that the log stays readable.
+- Timestamp every log message (ISO 8601 wall-clock, not only elapsed seconds). Long runs are read back hours later; "step 4500, t=2415" says nothing about when it happened or whether the process is still alive.
+- Prefer JSONL for logs that will be read by code: one JSON object per line, with `ts`, and the quantities as fields rather than formatted into a string. Keep human-readable progress lines separate if they are needed at all.
+- Agents should timestamp their messages back to the user when reporting on running or completed work (e.g. "09:12 — training at step 4500/8000"), so the user can tell how stale a status is and how long things took.
 
 ## Long-running tasks
 
-Anything that runs for more than a couple of minutes (training, sampling, bulk downloads, large scoring runs) is a
-long job, and both the job and the agent watching it have duties.
+Anything that runs for more than a couple of minutes (training, sampling, bulk downloads, large scoring runs) is a long job, and both the job and the agent watching it have duties.
 
-- **The job logs progress as `logging` requires** (cadence, timestamps, JSONL). For a long job, make the progress
-  convertible into an ETA (`step 4500/8000`, `neurons 120/216`, bytes or rows done), and add the rate or the ETA
-  itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable from a hung one.
-- **Run it in the background, logging to a file** next to the run's outputs: in a session folder's
-  `outputs/<YYYYMMDD-slug>/`, or its `experiments/<YYYYMMDD-slug>/` for an experiment run from a session folder. A
-  tool-repository experiment logs with its data in the session folder, not in the tool repo. Never run it in a foreground call that blocks the session or is killed by a timeout.
-- **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes —
-  one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a
-  stage that is slower than expected, a warning). Do this on a schedule, not only when the job finishes, so the user
-  never has to ask for a status update. Use a monitor on the log file when one is available rather than polling by
-  hand.
+- **The job logs progress as `logging` requires** (cadence, timestamps, JSONL). For a long job, make the progress convertible into an ETA (`step 4500/8000`, `neurons 120/216`, bytes or rows done), and add the rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable from a hung one.
+- **Run it in the background, logging to a file** next to the run's data in the session folder: `outputs/<YYYYMMDD-slug>/` for a standard run or an experiment on a tool, `experiments/<YYYYMMDD-slug>/` for an experiment in a session folder only. Never run it in a foreground call that blocks the session or is killed by a timeout.
+- **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes — one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a stage that is slower than expected, a warning). Do this on a schedule, not only when the job finishes, so the user never has to ask for a status update. Use a monitor on the log file when one is available rather than polling by hand.
 - **If the log goes quiet**, say so and check whether the process is alive before assuming it is working.
-- **When the job ends**, report the outcome in one message that stands on its own: whether it succeeded, how long it
-  took, where the outputs are, the headline numbers, and what happens next. Chained stages (train → sample → score)
-  are reported as they complete, not only at the end of the chain.
-- **Set the next step up before waiting.** While a job runs, do the work that does not depend on its result (docs,
-  tests, the analysis script that will read its output) so the result is used the moment it lands.
+- **When the job ends**, report the outcome in one message that stands on its own: whether it succeeded, how long it took, where the outputs are, the headline numbers, and what happens next. Chained stages (train → sample → score) are reported as they complete, not only at the end of the chain.
+- **Set the next step up before waiting.** While a job runs, do the work that does not depend on its result (docs, tests, the analysis script that will read its output) so the result is used the moment it lands.
 
 ## Experiment log
 
@@ -178,7 +165,7 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ### Experiment folders
 
-One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on whether the work has become a tool yet (see "From session to tool" in `session-setup`):
+One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
 
 - **Session folder only**: everything the experiment produced — results tables, plots, logs, checkpoints, configs, and the exact command or script that ran it.
 - **Session folder plus tool repository**: the tool repo's folder holds only the record — `STATUS.md`, configs, the exact command, and a link to where the data is. The experiment's input and output data (results, logs, checkpoints, plots) live in a session folder, under `outputs/<YYYYMMDD-slug>/` with the same slug, because data is not part of a tool repository.
@@ -213,7 +200,7 @@ Unless the user asks for a particular tone, write plainly and directly.
 
 ## README
 
-Every repository has a `README.md` at its root. If one is missing, create it.
+Every session folder and tool repository of your own has a `README.md` at its root. If one is missing, create it. Repositories you don't own keep their existing conventions (see `workspace-layout`).
 
 It covers two things, at a high level:
 

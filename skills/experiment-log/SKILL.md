@@ -27,7 +27,7 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ## Experiment folders
 
-One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on whether the work has become a tool yet (see "From session to tool" in `session-setup`):
+One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
 
 - **Session folder only**: everything the experiment produced — results tables, plots, logs, checkpoints, configs, and the exact command or script that ran it.
 - **Session folder plus tool repository**: the tool repo's folder holds only the record — `STATUS.md`, configs, the exact command, and a link to where the data is. The experiment's input and output data (results, logs, checkpoints, plots) live in a session folder, under `outputs/<YYYYMMDD-slug>/` with the same slug, because data is not part of a tool repository.

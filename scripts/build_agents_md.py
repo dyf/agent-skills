@@ -16,7 +16,7 @@ OUT = ROOT / "AGENTS.md"
 
 # Section order in AGENTS.md. Skills not listed here are appended alphabetically.
 ORDER = [
-    "session-setup",
+    "workspace-layout",
     "git-workflow",
     "data-safety",
     "data-contracts",

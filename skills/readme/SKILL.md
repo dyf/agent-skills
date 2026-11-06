@@ -1,11 +1,11 @@
 ---
 name: readme
-description: Every repository must have a README.md that explains, at a high level, what the repo is for and how to use it. Use when creating a repository or session folder, when a repo has no README, and whenever a change alters what the repo does or how it is used.
+description: Every session folder and tool repository must have a README.md that explains, at a high level, what the repo is for and how to use it. Use when creating a repository or session folder, when a repo has no README, and whenever a change alters what the repo does or how it is used.
 ---
 
 # README
 
-Every repository has a `README.md` at its root. If one is missing, create it.
+Every session folder and tool repository of your own has a `README.md` at its root. If one is missing, create it. Repositories you don't own keep their existing conventions (see `workspace-layout`).
 
 It covers two things, at a high level:
 

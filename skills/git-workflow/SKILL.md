@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Branch naming, Conventional Commits, and commit and push cadence rules. Use whenever creating a branch, writing a commit message, committing, or pushing — in remote repositories and in session folders alike.
+description: Branch naming, Conventional Commits, and commit and push cadence rules. Use whenever creating a branch, writing a commit message, committing, or pushing — in every repository, including session folders.
 ---
 
 # Git workflow
@@ -12,5 +12,5 @@ All work on remote repositories happens on feature branches, never directly on `
 
 Common types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`
 
-- **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in both remote repositories and session folders. Don't let significant work accumulate uncommitted.
+- **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in every repository you work in, including session folders. Don't let significant work accumulate uncommitted.
 - **Keep published branches current**: once a feature branch is published (pushed to the remote), push each local commit to it as you make it, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
