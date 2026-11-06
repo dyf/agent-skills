@@ -4,12 +4,12 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 
 | Skill | Covers |
 |-------|--------|
-| [session-setup](skills/session-setup/SKILL.md) | dated working folder, git init, venv, `data/` vs `tmp/`, `PLAN.md` |
+| [workspace-layout](skills/workspace-layout/SKILL.md) | session folders vs tool repos, session-to-tool transition, packaging conventions, folder layout, `PLAN.md` |
 | [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit and push cadence |
 | [data-safety](skills/data-safety/SKILL.md) | no in-place overwrites, `--dry-run` / `--test-run` for database writes |
 | [data-contracts](skills/data-contracts/SKILL.md) | version every produced dataset, checkpoint, and result table; bump on breaking structure or meaning changes |
 | [logging](skills/logging/SKILL.md) | ISO 8601 timestamps, JSONL logs, timestamped status reports |
-| [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, per-minute progress, proactive monitoring and reporting |
+| [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, progress logs, proactive monitoring and reporting |
 | [experiment-log](skills/experiment-log/SKILL.md) | `experiments/` folder: `EXPERIMENTS.md` index plus one results folder per experiment, each with a live `STATUS.md` |
 | [writing-style](skills/writing-style/SKILL.md) | plain prose, no Claudisms or padding |
 | [readme](skills/readme/SKILL.md) | every repo has a `README.md` covering its purpose and how to use it |

@@ -3,7 +3,7 @@ name: writing-style
 description: Plain, direct prose rules — no Claudisms, flourishes, or padding. Use whenever writing documents, READMEs, PR descriptions, reports, emails, or any prose meant to be read by people.
 ---
 
-# Writing documents
+# Writing style
 
 Prose should be clear and precise. Avoid:
 
