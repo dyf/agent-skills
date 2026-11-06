@@ -5,26 +5,26 @@ description: Keep a datestamped experiment log, with one folder per experiment f
 
 # Experiment log
 
-When experimenting on a model or an algorithm, keep a datestamped experiment log: an `EXPERIMENTS.md` index plus one folder per experiment. Where it lives depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
+When experimenting on a model or an algorithm, keep a datestamped experiment log: an index file plus one folder per experiment. Where it lives depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
 
-- **Session folder only**: in `outputs/`, alongside the session's other runs. Session folders have no `experiments/` folder.
+- **Session folder only**: the log is the session's `outputs/OUTPUTS.md` (see `workspace-layout`), which indexes every run in `outputs/`, experiments included. Session folders have no `experiments/` folder.
   ```
   outputs/
-    EXPERIMENTS.md
+    OUTPUTS.md
     20261106-lr-warmup/
       STATUS.md
   ```
-- **Session folder plus tool repository**: the records go in the tool repo's `experiments/`, and the data stays in the session folder's `outputs/`, with the same slug.
+- **Session folder plus tool repository**: the log is the tool repo's `experiments/EXPERIMENTS.md`, with the records in `experiments/<slug>/`. The data stays in the session folder's `outputs/<slug>/`, under the same slug, and the session's `OUTPUTS.md` entry for the run links to the record in the tool repo.
   ```
   <tool>/experiments/            <session>/outputs/
-    EXPERIMENTS.md
+    EXPERIMENTS.md                 OUTPUTS.md
     20261106-lr-warmup/            20261106-lr-warmup/
       STATUS.md                      results, logs, checkpoints
   ```
 
-## EXPERIMENTS.md
+## Log entries
 
-The index of every experiment, one entry each, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each entry has:
+In either file, each experiment has one entry, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each experiment entry has:
 
 - **Question / hypothesis**: what the experiment is meant to show.
 - **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
@@ -34,9 +34,9 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ## Experiment folders
 
-One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. The log summarizes; the folder holds the evidence.
 
-- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `STATUS.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `EXPERIMENTS.md` and `STATUS.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
+- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `STATUS.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `OUTPUTS.md` and `STATUS.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
 - **Session folder plus tool repository**: the tool repo's `experiments/<YYYYMMDD-slug>/` holds only the record: `STATUS.md`, configs, the exact command, and a link to the data. The data (results, logs, checkpoints, plots) goes in the session folder's `outputs/<YYYYMMDD-slug>/`, because data is not part of a tool repository.
 
 ## STATUS.md
@@ -44,12 +44,12 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 Each experiment folder has one `STATUS.md` that says where the experiment stands while it runs:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to this experiment's entry in `EXPERIMENTS.md`, using the heading anchor (e.g. `../EXPERIMENTS.md#20261106-lr-warmup`).
+- **Log entry**: a link to this experiment's entry in the log, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
 - **Done**: which runs, seeds, or stages have completed.
 - **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
 - **Preliminary interpretation**: what the results so far suggest, and how confident that is.
 
-`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
+`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into the log entry.
 
 ## Upkeep
 

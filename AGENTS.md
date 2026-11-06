@@ -14,12 +14,12 @@ Decide first where the work belongs:
 
 ### From session to tool
 
-Tools grow out of session experiments. Work starts in a session folder, and the experiment log (`outputs/EXPERIMENTS.md` and each experiment's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
+Tools grow out of session experiments. Work starts in a session folder, and the experiment log (`outputs/OUTPUTS.md` and each experiment's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
 
 Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
 
 1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
-2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's `outputs/EXPERIMENTS.md`, which stays where it is as history.
+2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's `outputs/OUTPUTS.md`, which stays where it is as history.
 3. From then on, sessions interact with the tool: new experiment records and `STATUS.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
 
 Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
@@ -27,11 +27,11 @@ Until that transition happens, there is no tool repository, and nothing goes any
 ### Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for experiment records (`EXPERIMENTS.md` and each `STATUS.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and status files (`OUTPUTS.md` and each `STATUS.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
-   printf "tmp/\ndata/\n.venv/\noutputs/**\n!outputs/**/\n!outputs/EXPERIMENTS.md\n!outputs/*/STATUS.md\n" > .gitignore
+   printf "tmp/\ndata/\n.venv/\noutputs/**\n!outputs/**/\n!outputs/OUTPUTS.md\n!outputs/*/STATUS.md\n" > .gitignore
    printf "# <slug>\n\n<what this task is for>\n" > README.md
    printf "# Plan\n\n<goal, approach, open questions, next steps>\n" > PLAN.md
    git add .gitignore README.md PLAN.md && git commit -m "chore: init session folder"
@@ -52,7 +52,13 @@ For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rust
 
 These are the complete layouts. Beyond them, add only what the language or tooling expects (e.g. `uv.lock`, `docs/`, `.github/`).
 
-Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`.
+Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`, one folder per run, indexed by `outputs/OUTPUTS.md`.
+
+`OUTPUTS.md` is to the session's runs what `EXPERIMENTS.md` is to a tool's experiments. One entry per run folder, newest last, headed `## YYYYMMDD-<slug>` (the folder name), followed by a one-line title and a link to the folder. Write the entry when the run starts and complete it when the run ends.
+
+- **Standard run**: purpose, setup (code version, inputs, command), and outcome (what it produced, whether it was verified and applied per `data-safety`).
+- **Experiment in a session folder only**: the experiment entry format from `experiment-log` (question, setup, findings). This makes `OUTPUTS.md` the session's experiment log.
+- **Experiment on a tool**: purpose and a link to its record in the tool repo's `EXPERIMENTS.md`; the findings live there.
 
 #### Session folder, on its own
 
@@ -60,12 +66,12 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
 20261106-<slug>/
   README.md            purpose and usage (see `readme`)
   PLAN.md              this session's plan
-  .gitignore           tmp/, data/, .venv/, and outputs/ except experiment records
+  .gitignore           tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and STATUS.md files
   .venv/               uv environment (gitignored)
   *.py, *.ipynb        scripts and notebooks
   data/                input data (gitignored)
   outputs/
-    EXPERIMENTS.md     experiment log (see `experiment-log`), tracked
+    OUTPUTS.md         index of the run folders, and the session's experiment log (tracked)
     20261106-<slug>/   one run's outputs and logs: a standard run, staged and verified per
                        `data-safety`, or an experiment, which also has a tracked STATUS.md
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
@@ -73,17 +79,18 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
 
 #### Session folder working on a tool
 
-The same, except there is no `outputs/EXPERIMENTS.md` and no `STATUS.md`: experiment records live in the tool repo, and the session keeps only their data.
+The same, except there is no `STATUS.md`: experiment records live in the tool repo, and the session keeps only their data. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
 
 ```
 20261106-<slug>/
   README.md            purpose and usage, naming the tool and its version or commit
   PLAN.md              this session's task
-  .gitignore           tmp/, data/, .venv/, outputs/
+  .gitignore           same as above
   .venv/               uv environment with the tool installed (gitignored)
   *.py, *.ipynb        scripts and notebooks that drive the tool
   data/                input data the tool reads (gitignored)
   outputs/
+    OUTPUTS.md         index of the run folders (tracked)
     20261106-<slug>/   one run's outputs and logs: a standard run, or one tool experiment's data,
                        named with the same slug as its record in the tool repo (gitignored)
   tmp/                 transient files (gitignored)
@@ -104,7 +111,7 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
   src/<package>/       package code
   tests/               tests
   experiments/
-    EXPERIMENTS.md     experiment log, starting with a link back to the session log it grew from
+    EXPERIMENTS.md     experiment log, starting with a link back to the session OUTPUTS.md it grew from
     20261106-<slug>/   one experiment's record: STATUS.md, configs, command, and a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```
@@ -189,26 +196,26 @@ Anything that runs for more than a couple of minutes (training, sampling, bulk d
 
 ## Experiment log
 
-When experimenting on a model or an algorithm, keep a datestamped experiment log: an `EXPERIMENTS.md` index plus one folder per experiment. Where it lives depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
+When experimenting on a model or an algorithm, keep a datestamped experiment log: an index file plus one folder per experiment. Where it lives depends on whether the work has become a tool yet (see "From session to tool" in `workspace-layout`):
 
-- **Session folder only**: in `outputs/`, alongside the session's other runs. Session folders have no `experiments/` folder.
+- **Session folder only**: the log is the session's `outputs/OUTPUTS.md` (see `workspace-layout`), which indexes every run in `outputs/`, experiments included. Session folders have no `experiments/` folder.
   ```
   outputs/
-    EXPERIMENTS.md
+    OUTPUTS.md
     20261106-lr-warmup/
       STATUS.md
   ```
-- **Session folder plus tool repository**: the records go in the tool repo's `experiments/`, and the data stays in the session folder's `outputs/`, with the same slug.
+- **Session folder plus tool repository**: the log is the tool repo's `experiments/EXPERIMENTS.md`, with the records in `experiments/<slug>/`. The data stays in the session folder's `outputs/<slug>/`, under the same slug, and the session's `OUTPUTS.md` entry for the run links to the record in the tool repo.
   ```
   <tool>/experiments/            <session>/outputs/
-    EXPERIMENTS.md
+    EXPERIMENTS.md                 OUTPUTS.md
     20261106-lr-warmup/            20261106-lr-warmup/
       STATUS.md                      results, logs, checkpoints
   ```
 
-### EXPERIMENTS.md
+### Log entries
 
-The index of every experiment, one entry each, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each entry has:
+In either file, each experiment has one entry, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each experiment entry has:
 
 - **Question / hypothesis**: what the experiment is meant to show.
 - **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
@@ -218,9 +225,9 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ### Experiment folders
 
-One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. The log summarizes; the folder holds the evidence.
 
-- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `STATUS.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `EXPERIMENTS.md` and `STATUS.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
+- **Session folder only**: `outputs/<YYYYMMDD-slug>/` holds everything: `STATUS.md`, configs, the exact command or script, results tables, plots, logs, checkpoints. `OUTPUTS.md` and `STATUS.md` are tracked in git; the rest is gitignored with the rest of `outputs/`.
 - **Session folder plus tool repository**: the tool repo's `experiments/<YYYYMMDD-slug>/` holds only the record: `STATUS.md`, configs, the exact command, and a link to the data. The data (results, logs, checkpoints, plots) goes in the session folder's `outputs/<YYYYMMDD-slug>/`, because data is not part of a tool repository.
 
 ### STATUS.md
@@ -228,12 +235,12 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 Each experiment folder has one `STATUS.md` that says where the experiment stands while it runs:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to this experiment's entry in `EXPERIMENTS.md`, using the heading anchor (e.g. `../EXPERIMENTS.md#20261106-lr-warmup`).
+- **Log entry**: a link to this experiment's entry in the log, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
 - **Done**: which runs, seeds, or stages have completed.
 - **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
 - **Preliminary interpretation**: what the results so far suggest, and how confident that is.
 
-`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
+`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into the log entry.
 
 ### Upkeep
 
