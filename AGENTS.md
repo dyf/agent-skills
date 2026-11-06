@@ -9,7 +9,8 @@ Workspace-level guidance for all agents. These are standing rules — follow the
 Decide first where the work belongs:
 
 - **Session folder**: for an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation. Create a new one as described below.
-- **Tool repository**: for work on a long-lived tool or model that has its own repo (e.g. morphogen). Work in that repo, on a feature branch per `git-workflow`. Don't create a session folder for it.
+- **Tool repository**: for work on a long-lived tool or model of your own that has its own repo (e.g. morphogen). Work in that repo, on a feature branch per `git-workflow`. The code, plan, and experiment log live there; the data it reads and writes lives in a session folder (see below).
+- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like this one): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ### Session folders
 
@@ -45,14 +46,14 @@ Session folders and tool repositories use the same layout at their root, except 
 | `PLAN.md` | the live plan (see below) |
 | `data/` | non-transient input data (gitignored). Session folders only |
 | `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored). Session folders only |
-| `experiments/<YYYYMMDD-slug>/` | outputs, logs, and `STATUS.md` of one experiment, per `experiment-log` (tracked; large files gitignored) |
+| `experiments/<YYYYMMDD-slug>/` | one experiment's record and `STATUS.md`, per `experiment-log`. In session folders it also holds the experiment's data (tracked; large files gitignored) |
 | `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored) |
 
-Data and run outputs are not part of a tool repository. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
+Data and run outputs are not part of a tool repository, including experiment data. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
 
 ### PLAN.md
 
-Keep a `PLAN.md` at the root of every session folder and tool repository. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
+Keep a `PLAN.md` at the root of every session folder and every tool repository of your own. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
 - Update it whenever the plan changes, not after the fact.
 - No changelog. History lives in git and the experiment log, not in the plan.
@@ -126,9 +127,9 @@ long job, and both the job and the agent watching it have duties.
 - **The job logs progress as `logging` requires** (cadence, timestamps, JSONL). For a long job, make the progress
   convertible into an ETA (`step 4500/8000`, `neurons 120/216`, bytes or rows done), and add the rate or the ETA
   itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable from a hung one.
-- **Run it in the background, logging to a file** next to the run's outputs (in a session folder,
-  `outputs/<YYYYMMDD-slug>/`), or in the experiment folder (`experiments/<YYYYMMDD-slug>/`) when the job is part of an
-  experiment. Never run it in a foreground call that blocks the session or is killed by a timeout.
+- **Run it in the background, logging to a file** next to the run's outputs: in a session folder's
+  `outputs/<YYYYMMDD-slug>/`, or its `experiments/<YYYYMMDD-slug>/` for an experiment run from a session folder. A
+  tool-repository experiment logs with its data in the session folder, not in the tool repo. Never run it in a foreground call that blocks the session or is killed by a timeout.
 - **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes —
   one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a
   stage that is slower than expected, a warning). Do this on a schedule, not only when the job finishes, so the user
@@ -165,7 +166,10 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ### Experiment folders
 
-One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. It holds everything the experiment produced: results tables, plots, logs, configs, and the exact command or script that ran it. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on where the experiment lives:
+
+- **In a session folder**: everything the experiment produced — results tables, plots, logs, checkpoints, configs, and the exact command or script that ran it.
+- **In a tool repository**: only the record — `STATUS.md`, configs, the exact command, and a link to where the data is. The experiment's input and output data (results, logs, checkpoints, plots) live in a session folder, under `outputs/<YYYYMMDD-slug>/` with the same slug, because data is not part of a tool repository.
 
 ### STATUS.md
 
@@ -182,7 +186,7 @@ Each experiment folder has one `STATUS.md` that says where the experiment stands
 ### Upkeep
 
 - Commit often, as `git-workflow` requires: the entry when the experiment starts, results and `STATUS.md` as they land, the findings when it ends. Don't hold the experiment back for one commit at the end.
-- Large files (checkpoints, big arrays) can be gitignored, but keep them in the folder so the paths in the log stay valid.
+- In a session folder, large files (checkpoints, big arrays) can be gitignored, but keep them in the experiment folder so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 
 ## Writing style

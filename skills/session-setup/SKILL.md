@@ -8,7 +8,8 @@ description: Where work lives — dated session folders for immediate, short-liv
 Decide first where the work belongs:
 
 - **Session folder**: for an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation. Create a new one as described below.
-- **Tool repository**: for work on a long-lived tool or model that has its own repo (e.g. morphogen). Work in that repo, on a feature branch per `git-workflow`. Don't create a session folder for it.
+- **Tool repository**: for work on a long-lived tool or model of your own that has its own repo (e.g. morphogen). Work in that repo, on a feature branch per `git-workflow`. The code, plan, and experiment log live there; the data it reads and writes lives in a session folder (see below).
+- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like this one): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ## Session folders
 
@@ -44,14 +45,14 @@ Session folders and tool repositories use the same layout at their root, except 
 | `PLAN.md` | the live plan (see below) |
 | `data/` | non-transient input data (gitignored). Session folders only |
 | `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` (gitignored). Session folders only |
-| `experiments/<YYYYMMDD-slug>/` | outputs, logs, and `STATUS.md` of one experiment, per `experiment-log` (tracked; large files gitignored) |
+| `experiments/<YYYYMMDD-slug>/` | one experiment's record and `STATUS.md`, per `experiment-log`. In session folders it also holds the experiment's data (tracked; large files gitignored) |
 | `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored) |
 
-Data and run outputs are not part of a tool repository. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
+Data and run outputs are not part of a tool repository, including experiment data. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/` and `outputs/`, shared storage, a database), passed in by path or config, never paths inside the repo.
 
 ## PLAN.md
 
-Keep a `PLAN.md` at the root of every session folder and tool repository. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
+Keep a `PLAN.md` at the root of every session folder and every tool repository of your own. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
 - Update it whenever the plan changes, not after the fact.
 - No changelog. History lives in git and the experiment log, not in the plan.

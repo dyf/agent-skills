@@ -1,6 +1,6 @@
 ---
 name: experiment-log
-description: Keep a datestamped experiment log, with one folder per experiment for its results, when experimenting on a model or algorithm. Use whenever running, comparing, or tuning experiments (training runs, hyperparameter changes, ablations, algorithm variants) and when recording their results.
+description: Keep a datestamped experiment log, with one folder per experiment for its status and results, when experimenting on a model or algorithm. Use whenever running, comparing, or tuning experiments (training runs, hyperparameter changes, ablations, algorithm variants) and when recording their results.
 ---
 
 # Experiment log
@@ -27,7 +27,10 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ## Experiment folders
 
-One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. It holds everything the experiment produced: results tables, plots, logs, configs, and the exact command or script that ran it. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. `EXPERIMENTS.md` summarizes; the folder holds the evidence. What goes in it depends on where the experiment lives:
+
+- **In a session folder**: everything the experiment produced — results tables, plots, logs, checkpoints, configs, and the exact command or script that ran it.
+- **In a tool repository**: only the record — `STATUS.md`, configs, the exact command, and a link to where the data is. The experiment's input and output data (results, logs, checkpoints, plots) live in a session folder, under `outputs/<YYYYMMDD-slug>/` with the same slug, because data is not part of a tool repository.
 
 ## STATUS.md
 
@@ -44,5 +47,5 @@ Each experiment folder has one `STATUS.md` that says where the experiment stands
 ## Upkeep
 
 - Commit often, as `git-workflow` requires: the entry when the experiment starts, results and `STATUS.md` as they land, the findings when it ends. Don't hold the experiment back for one commit at the end.
-- Large files (checkpoints, big arrays) can be gitignored, but keep them in the folder so the paths in the log stay valid.
+- In a session folder, large files (checkpoints, big arrays) can be gitignored, but keep them in the experiment folder so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
