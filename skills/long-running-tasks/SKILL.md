@@ -12,7 +12,8 @@ job, and both the job and the agent watching it have duties. Log lines follow th
   in units the reader can convert into an ETA: `step 4500/8000`, `neurons 120/216`, bytes or rows done. Add the
   rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable
   from a hung one.
-- **Run it in the background, logging to a file** under the run directory or `tmp/` (timestamped lines, JSONL if
+- **Run it in the background, logging to a file** in the run's `outputs/<YYYYMMDD-slug>/` folder, or in the experiment folder
+  (`experiments/<YYYYMMDD-slug>/`) when the job is part of an experiment (timestamped lines, JSONL if
   code will read it), never in a foreground call that blocks the session or is killed by a timeout.
 - **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes —
   one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a

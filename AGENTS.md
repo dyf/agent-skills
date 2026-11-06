@@ -9,12 +9,13 @@ Workspace-level guidance for all agents. These are standing rules — follow the
 At the start of each new session:
 
 1. Create a working folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing what the session is about. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/` and `data/` gitignored:
+2. Initialize it as a git repo with `tmp/` and `data/` gitignored and a `README.md` (see the `readme` skill) stating the session's purpose:
    ```
    git init
    mkdir tmp data
    printf "tmp/\ndata/\n" > .gitignore
-   git add .gitignore && git commit -m "init"
+   printf "# <slug>\n\n<what this session is for>\n" > README.md
+   git add .gitignore README.md && git commit -m "chore: init session folder"
    ```
 3. Create a virtual environment: `uv venv .venv`
 
@@ -24,6 +25,8 @@ At the start of each new session:
 |------|----------|
 | top level | code — scripts, notebooks, anything meant to be run or reviewed |
 | `data/` | non-transient data (gitignored — survives the session but not tracked) |
+| `outputs/<YYYYMMDD-slug>/` | outputs and logs of a standard (non-experiment) run, staged and verified per `data-safety` |
+| `experiments/<YYYYMMDD-slug>/` | outputs, logs, and `STATUS.md` of one experiment (see `experiment-log`) |
 | `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored) |
 
 ### PLAN.md
@@ -59,7 +62,7 @@ Scripts that write to or modify a database must always support two safety modes:
 
 Implement these as CLI flags (`--dry-run`, `--test-run`) or environment variables. Make it impossible to accidentally run the full destructive path without explicitly opting out of dry run.
 
-When space permits, stage outputs to a `./results/` folder and verify them before committing destructive changes.
+When space permits, stage outputs to `outputs/<YYYYMMDD-slug>/` and verify them before committing destructive changes.
 
 ## Data contracts
 
@@ -103,7 +106,8 @@ job, and both the job and the agent watching it have duties. Log lines follow th
   in units the reader can convert into an ETA: `step 4500/8000`, `neurons 120/216`, bytes or rows done. Add the
   rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable
   from a hung one.
-- **Run it in the background, logging to a file** under the run directory or `tmp/` (timestamped lines, JSONL if
+- **Run it in the background, logging to a file** in the run's `outputs/<YYYYMMDD-slug>/` folder, or in the experiment folder
+  (`experiments/<YYYYMMDD-slug>/`) when the job is part of an experiment (timestamped lines, JSONL if
   code will read it), never in a foreground call that blocks the session or is killed by a timeout.
 - **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes —
   one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a
@@ -131,7 +135,7 @@ experiments/
 
 ### EXPERIMENTS.md
 
-The index of every experiment, one entry each, newest last, headed `## YYYY-MM-DD — <short title>`, with a link to the experiment's folder. Each entry has:
+The index of every experiment, one entry each, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each entry has:
 
 - **Question / hypothesis**: what the experiment is meant to show.
 - **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
@@ -141,21 +145,21 @@ Write the entry when the experiment starts and add the findings when it finishes
 
 ### Experiment folders
 
-One subfolder per experiment, named `YYYYMMDD-<slug>` to match its entry. It holds everything the experiment produced: results tables, plots, logs, configs, and the exact command or script that ran it. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+One subfolder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2–4 word kebab-case slug), matching its entry. It holds everything the experiment produced: results tables, plots, logs, configs, and the exact command or script that ran it. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
 
 ### STATUS.md
 
 Each experiment folder has one `STATUS.md` that says where the experiment stands while it runs:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to this experiment's entry in `EXPERIMENTS.md`, using the heading anchor (e.g. `../EXPERIMENTS.md#2026-11-06--lr-warmup`).
+- **Log entry**: a link to this experiment's entry in `EXPERIMENTS.md`, using the heading anchor (e.g. `../EXPERIMENTS.md#20261106-lr-warmup`).
 - **Done**: which runs, seeds, or stages have completed.
 - **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
 - **Preliminary interpretation**: what the results so far suggest, and how confident that is.
 
-Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
+`STATUS.md` is a status report, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
 
-- Commit the entry, the folder, and the code that produced the results together.
+- Commit often, as `git-workflow` requires: the entry when the experiment starts, results and `STATUS.md` as they land, the findings when it ends. Don't hold the experiment back for one commit at the end.
 - Large files (checkpoints, big arrays) can be gitignored, but keep them in the folder so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 
