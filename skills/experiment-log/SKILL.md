@@ -41,15 +41,7 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 
 ## SUMMARY.md
 
-Each experiment folder has one `SUMMARY.md` that says where the experiment stands while it runs:
-
-- **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to this experiment's entry in the log, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
-- **Done**: which runs, seeds, or stages have completed.
-- **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
-- **Preliminary interpretation**: what the results so far suggest, and how confident that is.
-
-`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `SUMMARY.md` and write the findings into the log entry.
+Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). For an experiment, when it finishes, also write the findings into its log entry.
 
 ## Upkeep
 

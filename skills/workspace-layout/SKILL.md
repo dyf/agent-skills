@@ -26,7 +26,7 @@ Until that transition happens, there is no tool repository, and nothing goes any
 ## Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and status files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and summary files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
@@ -53,12 +53,6 @@ These are the complete layouts. Beyond them, add only what the language or tooli
 
 Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`, one folder per run, indexed by `outputs/OUTPUTS.md`.
 
-`OUTPUTS.md` is to the session's runs what `EXPERIMENTS.md` is to a tool's experiments. One entry per run folder, newest last, headed `## YYYYMMDD-<slug>` (the folder name), followed by a one-line title and a link to the folder. Write the entry when the run starts and complete it when the run ends.
-
-- **Standard run**: purpose, setup (code version, inputs, command), and outcome (what it produced, whether it was verified and applied per `data-safety`).
-- **Experiment in a session folder only**: the experiment entry format from `experiment-log` (question, setup, findings). This makes `OUTPUTS.md` the session's experiment log.
-- **Experiment on a tool**: purpose and a link to its record in the tool repo's `EXPERIMENTS.md`; the findings live there.
-
 ### Session folder, on its own
 
 ```
@@ -71,14 +65,14 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
   data/                input data (gitignored)
   outputs/
     OUTPUTS.md         index of the run folders, and the session's experiment log (tracked)
-    20261106-<slug>/   one run's outputs and logs: a standard run, staged and verified per
-                       `data-safety`, or an experiment, which also has a tracked SUMMARY.md
+    20261106-<slug>/   one run: SUMMARY.md (tracked) plus its outputs and logs. A standard run,
+                       staged and verified per `data-safety`, or an experiment
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
 ```
 
 ### Session folder working on a tool
 
-The same, except there is no `SUMMARY.md`: experiment records live in the tool repo, and the session keeps only their data. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
+The same, except that a tool experiment's record and `SUMMARY.md` live in the tool repo, and the session keeps only its data. Standard runs still have their `SUMMARY.md` here. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
 
 ```
 20261106-<slug>/
@@ -90,8 +84,9 @@ The same, except there is no `SUMMARY.md`: experiment records live in the tool r
   data/                input data the tool reads (gitignored)
   outputs/
     OUTPUTS.md         index of the run folders (tracked)
-    20261106-<slug>/   one run's outputs and logs: a standard run, or one tool experiment's data,
-                       named with the same slug as its record in the tool repo (gitignored)
+    20261106-<slug>/   one run's outputs and logs: a standard run, with its SUMMARY.md (tracked),
+                       or one tool experiment's data, named with the same slug as its record
+                       in the tool repo (gitignored)
   tmp/                 transient files (gitignored)
 ```
 
@@ -114,6 +109,28 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
     20261106-<slug>/   one experiment's record: SUMMARY.md, configs, command, and a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```
+
+## OUTPUTS.md
+
+`OUTPUTS.md` is to the session's runs what `EXPERIMENTS.md` is to a tool's experiments. One entry per run folder, newest last, headed `## YYYYMMDD-<slug>` (the folder name), followed by a one-line title and a link to the folder. Write the entry when the run starts and complete it when the run ends.
+
+- **Standard run**: purpose, setup (code version, inputs, command), and outcome (what it produced, whether it was verified and applied per `data-safety`).
+- **Experiment in a session folder only**: the experiment entry format from `experiment-log` (question, setup, findings). This makes `OUTPUTS.md` the session's experiment log.
+- **Experiment on a tool**: purpose and a link to its record in the tool repo's `EXPERIMENTS.md`; the findings live there.
+
+## SUMMARY.md
+
+Every run folder has a `SUMMARY.md`: each `outputs/<YYYYMMDD-slug>/` in a session folder, and each `experiments/<YYYYMMDD-slug>/` in a tool repo (for a tool experiment, the summary lives with the record, not with the data). It is the one file a reader opens to understand a run, while it runs and after. It contains:
+
+- **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
+- **Index entry**: a link to the run's entry in its index file, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
+- **Purpose**: what the run is for, and for an experiment, the question it answers.
+- **Inputs, parameters, and code**: input data paths, parameters and config, the code version (commit hash, or tool name and version), and the exact command.
+- **Time**: start time, end time (or "running"), and duration so far or in total.
+- **Status**: what has completed, what is still running or queued (with progress, e.g. `step 4500/8000`), and anything that failed. When the run ends, mark it finished or failed.
+- **Preliminary interpretation**: what the results so far suggest, and how confident that is.
+
+`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends.
 
 ## PLAN.md
 
