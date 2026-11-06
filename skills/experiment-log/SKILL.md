@@ -11,6 +11,7 @@ When experimenting on a model or an algorithm, keep all experiments under one to
 experiments/
   EXPERIMENTS.md
   20261106-lr-warmup/
+    STATUS.md
   20261107-wider-decoder/
 ```
 
@@ -27,6 +28,18 @@ Write the entry when the experiment starts and add the findings when it finishes
 ## Experiment folders
 
 One subfolder per experiment, named `YYYYMMDD-<slug>` to match its entry. It holds everything the experiment produced: results tables, plots, logs, configs, and the exact command or script that ran it. `EXPERIMENTS.md` summarizes; the folder holds the evidence.
+
+## STATUS.md
+
+Each experiment folder has one `STATUS.md` that says where the experiment stands while it runs:
+
+- **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
+- **Log entry**: a link to this experiment's entry in `EXPERIMENTS.md`, using the heading anchor (e.g. `../EXPERIMENTS.md#2026-11-06--lr-warmup`).
+- **Done**: which runs, seeds, or stages have completed.
+- **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
+- **Preliminary interpretation**: what the results so far suggest, and how confident that is.
+
+Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `STATUS.md` and write the findings into `EXPERIMENTS.md`.
 
 - Commit the entry, the folder, and the code that produced the results together.
 - Large files (checkpoints, big arrays) can be gitignored, but keep them in the folder so the paths in the log stay valid.
