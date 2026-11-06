@@ -27,7 +27,7 @@ Until that transition happens, there is no tool repository, and nothing goes any
 ### Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and status files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and summary files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
@@ -54,12 +54,6 @@ These are the complete layouts. Beyond them, add only what the language or tooli
 
 Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`, one folder per run, indexed by `outputs/OUTPUTS.md`.
 
-`OUTPUTS.md` is to the session's runs what `EXPERIMENTS.md` is to a tool's experiments. One entry per run folder, newest last, headed `## YYYYMMDD-<slug>` (the folder name), followed by a one-line title and a link to the folder. Write the entry when the run starts and complete it when the run ends.
-
-- **Standard run**: purpose, setup (code version, inputs, command), and outcome (what it produced, whether it was verified and applied per `data-safety`).
-- **Experiment in a session folder only**: the experiment entry format from `experiment-log` (question, setup, findings). This makes `OUTPUTS.md` the session's experiment log.
-- **Experiment on a tool**: purpose and a link to its record in the tool repo's `EXPERIMENTS.md`; the findings live there.
-
 #### Session folder, on its own
 
 ```
@@ -72,14 +66,14 @@ Session folders never have an `experiments/` folder. All of a session's runs, ex
   data/                input data (gitignored)
   outputs/
     OUTPUTS.md         index of the run folders, and the session's experiment log (tracked)
-    20261106-<slug>/   one run's outputs and logs: a standard run, staged and verified per
-                       `data-safety`, or an experiment, which also has a tracked SUMMARY.md
+    20261106-<slug>/   one run: SUMMARY.md (tracked) plus its outputs and logs. A standard run,
+                       staged and verified per `data-safety`, or an experiment
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
 ```
 
 #### Session folder working on a tool
 
-The same, except there is no `SUMMARY.md`: experiment records live in the tool repo, and the session keeps only their data. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
+The same, except that a tool experiment's record and `SUMMARY.md` live in the tool repo, and the session keeps only its data. Standard runs still have their `SUMMARY.md` here. `OUTPUTS.md` still indexes every run folder, and links each tool experiment to its record.
 
 ```
 20261106-<slug>/
@@ -91,8 +85,9 @@ The same, except there is no `SUMMARY.md`: experiment records live in the tool r
   data/                input data the tool reads (gitignored)
   outputs/
     OUTPUTS.md         index of the run folders (tracked)
-    20261106-<slug>/   one run's outputs and logs: a standard run, or one tool experiment's data,
-                       named with the same slug as its record in the tool repo (gitignored)
+    20261106-<slug>/   one run's outputs and logs: a standard run, with its SUMMARY.md (tracked),
+                       or one tool experiment's data, named with the same slug as its record
+                       in the tool repo (gitignored)
   tmp/                 transient files (gitignored)
 ```
 
@@ -115,6 +110,36 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
     20261106-<slug>/   one experiment's record: SUMMARY.md, configs, command, and a link to its data
                        in the session folder's outputs/20261106-<slug>/
 ```
+
+### EXPERIMENTS.md and OUTPUTS.md
+
+Each is a log: one brief entry per run folder, so a reader can scan what was done and what came of it without opening every folder.
+
+- `OUTPUTS.md`, in a session folder's `outputs/`, logs every run in that session: standard runs and experiments. In a session folder only, it is also the session's experiment log.
+- `EXPERIMENTS.md`, in a tool repo's `experiments/`, logs every experiment on the tool. After the session-to-tool transition, it starts with a note linking back to the session `OUTPUTS.md` it grew from.
+
+Each entry, newest last:
+
+- **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
+- **Title and link**: a one-line title and a link to the run's folder (for a tool experiment in `OUTPUTS.md`, to its record in the tool repo; in `EXPERIMENTS.md`, also to its data in the session folder).
+- **Purpose**: a sentence or two on what the run is for, or the question an experiment answers.
+- **Results**: a brief summary of what came of it and what it means, including negative and inconclusive results, and for an experiment, what to try next. While the run is going, write "running" and see `SUMMARY.md`.
+
+Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts and fill in the results when it ends, not after the fact.
+
+### SUMMARY.md
+
+Every run folder has a `SUMMARY.md`: each `outputs/<YYYYMMDD-slug>/` in a session folder, and each `experiments/<YYYYMMDD-slug>/` in a tool repo (for a tool experiment, the summary lives with the record, not with the data). It is the one file a reader opens to understand a run, while it runs and after. It contains:
+
+- **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
+- **Index entry**: a link to the run's entry in its index file, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
+- **Purpose**: what the run is for, and for an experiment, the question it answers.
+- **Inputs, parameters, and code**: input data paths, parameters and config, the code version (commit hash, or tool name and version), and the exact command.
+- **Time**: start time, end time (or "running"), and duration so far or in total.
+- **Status**: what has completed, what is still running or queued (with progress, e.g. `step 4500/8000`), and anything that failed. When the run ends, mark it finished or failed.
+- **Preliminary interpretation**: what the results so far suggest, and how confident that is.
+
+`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends.
 
 ### PLAN.md
 
@@ -190,6 +215,7 @@ Anything that runs for more than a couple of minutes (training, sampling, bulk d
 - **The job logs progress as `logging` requires** (cadence, timestamps, JSONL). For a long job, make the progress convertible into an ETA (`step 4500/8000`, `neurons 120/216`, bytes or rows done), and add the rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable from a hung one.
 - **Run it in the background, logging to a file** in the run's session folder, under `outputs/<YYYYMMDD-slug>/`, for every kind of run: standard runs and experiments alike. Never run it in a foreground call that blocks the session or is killed by a timeout.
 - **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes — one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a stage that is slower than expected, a warning). Do this on a schedule, not only when the job finishes, so the user never has to ask for a status update. Use a monitor on the log file when one is available rather than polling by hand.
+- **Keep the run's `SUMMARY.md` current** (see `workspace-layout`), every ~10 minutes by default and once more when the job ends.
 - **If the log goes quiet**, say so and check whether the process is alive before assuming it is working.
 - **When the job ends**, report the outcome in one message that stands on its own: whether it succeeded, how long it took, where the outputs are, the headline numbers, and what happens next. Chained stages (train → sample → score) are reported as they complete, not only at the end of the chain.
 - **Set the next step up before waiting.** While a job runs, do the work that does not depend on its result (docs, tests, the analysis script that will read its output) so the result is used the moment it lands.
@@ -215,13 +241,7 @@ When experimenting on a model or an algorithm, keep a datestamped experiment log
 
 ### Log entries
 
-In either file, each experiment has one entry, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each experiment entry has:
-
-- **Question / hypothesis**: what the experiment is meant to show.
-- **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
-- **Findings**: a short summary of the results and what they mean, including negative and inconclusive results, and what to try next.
-
-Write the entry when the experiment starts and add the findings when it finishes, not after the fact.
+Each experiment gets one entry in the log (`OUTPUTS.md` or `EXPERIMENTS.md`), in the format defined in `workspace-layout` ("EXPERIMENTS.md and OUTPUTS.md"): heading, title and link, purpose, results. Write it when the experiment starts and add the results when it finishes.
 
 ### Experiment folders
 
@@ -232,19 +252,11 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 
 ### SUMMARY.md
 
-Each experiment folder has one `SUMMARY.md` that says where the experiment stands while it runs:
-
-- **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to this experiment's entry in the log, using the heading anchor (`../OUTPUTS.md#20261106-lr-warmup` in a session folder, `../EXPERIMENTS.md#20261106-lr-warmup` in a tool repo).
-- **Done**: which runs, seeds, or stages have completed.
-- **Not done**: what is still running or queued, with progress where known (e.g. `step 4500/8000`), and anything that failed.
-- **Preliminary interpretation**: what the results so far suggest, and how confident that is.
-
-`SUMMARY.md` is a running summary, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply. Overwrite it in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the experiment produces new information, every ~10 minutes by default. When the experiment finishes, mark it finished in `SUMMARY.md` and write the findings into the log entry.
+Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). When the experiment finishes, also write the results into its log entry.
 
 ### Upkeep
 
-- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the findings when it ends. Don't hold the experiment back for one commit at the end.
+- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the results when it ends. Don't hold the experiment back for one commit at the end.
 - Keep an experiment's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 
