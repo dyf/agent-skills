@@ -1,15 +1,27 @@
 ---
 name: session-setup
-description: Where work lives — dated session folders for immediate, short-lived tasks, and the tool repository itself for long-lived tools and models — plus the shared folder layout (data/, outputs/, experiments/, tmp/) and PLAN.md. Use at the start of every new session or task, before writing any code, scripts, or data, and whenever deciding where a file should go or updating the session plan.
+description: Where work lives — dated session folders by default, plus a tool repository once session experiments grow into a tool, and when to make that transition — plus the shared folder layout (data/, outputs/, experiments/, tmp/) and PLAN.md. Use at the start of every new session or task, before writing any code, scripts, or data, and whenever deciding where a file should go or updating the session plan.
 ---
 
 # Session setup
 
 Decide first where the work belongs:
 
-- **Session folder**: for an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation. Create a new one as described below.
-- **Tool repository**: for work on a long-lived tool or model of your own that has its own repo (e.g. morphogen). Work in that repo, on a feature branch per `git-workflow`. The code, plan, and experiment log live there; the data it reads and writes lives in a session folder (see below).
-- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like this one): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
+- **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiments, data.
+- **Session folder plus tool repository**: once a tool or model of your own has its own repo (e.g. morphogen), a session works with it. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`. The data it reads and writes lives in the session folder.
+- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
+
+## From session to tool
+
+Tools grow out of session experiments. Work starts in a session folder, and the experiment structure (`experiments/`, `EXPERIMENTS.md`, `STATUS.md`, data) stays there until the code becomes a tool.
+
+Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
+
+1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
+2. Start the tool repo's `experiments/EXPERIMENTS.md`. Its first entry links back to the session folder's experiment log, which stays where it is as history.
+3. From then on, sessions interact with the tool: new experiment records and `STATUS.md` go in the tool repo, and their data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
+
+Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
 
 ## Session folders
 
