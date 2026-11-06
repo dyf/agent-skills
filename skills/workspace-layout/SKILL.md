@@ -1,6 +1,6 @@
 ---
 name: workspace-layout
-description: Where work lives — dated session folders by default, plus a tool repository once session experiments grow into a tool, and when to make that transition — plus the shared folder layout (data/, outputs/, experiments/, tmp/) and PLAN.md. Use at the start of every new session or task, before writing any code, scripts, or data, and whenever deciding where a file should go or updating the session plan.
+description: Where work lives — dated session folders by default, plus a tool repository once session experiments grow into a tool, and when to make that transition — plus the complete folder layout of each and PLAN.md. Use at the start of every new session or task, before writing any code, scripts, or data, and whenever deciding where a file should go or updating the session plan.
 ---
 
 # Workspace layout
@@ -9,7 +9,7 @@ Decide first where the work belongs:
 
 - **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiments, data.
 - **Session folder plus tool repository**: for work on a tool or model of your own that has its own repo (e.g. morphogen). Each session of work on the tool still gets its own session folder. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`; the data the session reads and writes lives in the session folder.
-- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md`, the folder layout below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
+- **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md` or the folder layouts below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ## From session to tool
 
@@ -26,11 +26,11 @@ Until that transition happens, there is no tool repository, and nothing goes any
 ## Session folders
 
 1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
-2. Initialize it as a git repo with `tmp/`, `data/`, and `outputs/` gitignored, plus a `README.md` (see `readme`) and a `PLAN.md`:
+2. Initialize it as a git repo with `tmp/`, `data/`, `outputs/`, and `.venv/` gitignored, plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
    mkdir tmp data outputs
-   printf "tmp/\ndata/\noutputs/\n" > .gitignore
+   printf "tmp/\ndata/\noutputs/\n.venv/\n" > .gitignore
    printf "# <slug>\n\n<what this task is for>\n" > README.md
    printf "# Plan\n\n<goal, approach, open questions, next steps>\n" > PLAN.md
    git add .gitignore README.md PLAN.md && git commit -m "chore: init session folder"
@@ -39,7 +39,7 @@ Until that transition happens, there is no tool repository, and nothing goes any
 
 ## Tool repositories
 
-A tool repository is meant to be installed, imported, and maintained, so in addition to the folder layout below it follows the standard packaging and style conventions for its language. Use the ecosystem's usual project file, source layout, test location, and formatter/linter rather than inventing a structure. For Python:
+A tool repository is meant to be installed, imported, and maintained, so it follows the standard packaging and style conventions for its language. Use the ecosystem's usual project file, source layout, test location, and formatter/linter rather than inventing a structure. For Python:
 
 - `pyproject.toml` as the single project file, managed with `uv` (see `python-uv`); package code under `src/<package>/`, tests under `tests/`.
 - PEP 8 style, enforced with `ruff check` and `ruff format`; type hints on public functions.
@@ -47,30 +47,76 @@ A tool repository is meant to be installed, imported, and maintained, so in addi
 
 For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rustfmt`/`clippy` for Rust, `go.mod` and `gofmt` for Go, `package.json` with ESLint and Prettier for TypeScript).
 
-## Folder layout
+## Folder layouts
 
-Session folders and tool repositories use the same layout at their root, except that tool repositories have no `data/`, `outputs/`, or `tmp/`:
+These are the complete layouts. Beyond them, add only what the language or tooling expects (e.g. `uv.lock`, `docs/`, `.github/`).
 
-| Path | Contents |
-|------|----------|
-| top level | code. In session folders: scripts and notebooks. In tool repositories: the language's standard layout (above) |
-| `PLAN.md` | the live plan (see below) |
-| `data/` | non-transient input data (gitignored). Session folders only |
-| `outputs/<YYYYMMDD-slug>/` | outputs and logs of one run: a standard run, staged and verified per `data-safety`, or an experiment on a tool, whose record lives in the tool repo (gitignored). Session folders only |
-| `experiments/<YYYYMMDD-slug>/` | one experiment's record and `STATUS.md`, per `experiment-log`. In session folders it also holds the experiment's data (tracked; large files gitignored) |
-| `tmp/` | transient files — downloads, intermediate outputs, debug dumps (gitignored). Session folders only |
+### Session folder, on its own
 
-Data, run outputs, and scratch files are not part of a tool repository, including experiment data. A tool reads its input from, and writes its outputs to, locations outside the repo (a session folder's `data/`, `outputs/`, and `tmp/`, shared storage, a database), passed in by path or config, never paths inside the repo.
+```
+20261106-<slug>/
+  README.md            purpose and usage (see `readme`)
+  PLAN.md              this session's plan
+  .gitignore           tmp/, data/, outputs/, .venv/
+  .venv/               uv environment (gitignored)
+  *.py, *.ipynb        scripts and notebooks
+  data/                input data (gitignored)
+  outputs/
+    20261106-<slug>/   outputs and logs of one standard run, staged and verified per `data-safety` (gitignored)
+  experiments/
+    EXPERIMENTS.md     experiment index (see `experiment-log`)
+    20261106-<slug>/   one experiment: STATUS.md, configs, command, results, logs, plots, checkpoints
+                       (tracked; large files gitignored)
+  tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
+```
+
+### Session folder working on a tool
+
+The same, except there is no `experiments/`: experiment records live in the tool repo, and the session keeps only their data.
+
+```
+20261106-<slug>/
+  README.md            purpose and usage, naming the tool and its version or commit
+  PLAN.md              this session's task
+  .gitignore           tmp/, data/, outputs/, .venv/
+  .venv/               uv environment with the tool installed (gitignored)
+  *.py, *.ipynb        scripts and notebooks that drive the tool
+  data/                input data the tool reads (gitignored)
+  outputs/
+    20261106-<slug>/   outputs and logs of one run: a standard run, or one tool experiment's data,
+                       named with the same slug as its record in the tool repo (gitignored)
+  tmp/                 transient files (gitignored)
+```
+
+### Tool repository
+
+Code, plan, and experiment records only. Data, run outputs, and scratch files are never part of a tool repository, including experiment data: the tool reads and writes them at locations outside the repo (a session folder, shared storage, a database), passed in by path or config.
+
+```
+<tool>/
+  README.md            purpose and usage (see `readme`)
+  PLAN.md              the tool's direction
+  pyproject.toml       project file (or the language's equivalent)
+  uv.lock              locked dependencies
+  .gitignore           .venv/ and build artifacts
+  .venv/               uv development environment (gitignored)
+  src/<package>/       package code
+  tests/               tests
+  experiments/
+    EXPERIMENTS.md     experiment index, starting with a link back to the session log it grew from
+    20261106-<slug>/   one experiment's record: STATUS.md, configs, command, and a link to its data
+                       in the session folder's outputs/20261106-<slug>/
+```
 
 ## PLAN.md
 
 Keep a `PLAN.md` at the root of every session folder and every tool repository of your own. It should always reflect the current thinking — not history, not what we tried, but what we are doing and why.
 
+- The file is the live plan: goal, approach, open questions, next steps.
+- Update it whenever the plan changes, not after the fact.
+- No changelog. History lives in git and the experiment log, not in the plan.
+
 When a session works on a tool, the two plans have different scopes:
 
 - The tool repo's `PLAN.md` is the tool's direction: goals, roadmap, open design questions. It outlives any one session.
 - The session folder's `PLAN.md` is this session's task: what we are doing now, and how it moves the tool's plan forward.
-
-- Update it whenever the plan changes, not after the fact.
-- No changelog. History lives in git and the experiment log, not in the plan.
-- The file is the live plan: goal, approach, open questions, next steps.
