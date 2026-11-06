@@ -5,10 +5,12 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 | Skill | Covers |
 |-------|--------|
 | [session-setup](skills/session-setup/SKILL.md) | dated working folder, git init, venv, `data/` vs `tmp/`, `PLAN.md` |
-| [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit cadence |
+| [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit and push cadence |
 | [data-safety](skills/data-safety/SKILL.md) | no in-place overwrites, `--dry-run` / `--test-run` for database writes |
+| [data-contracts](skills/data-contracts/SKILL.md) | version every produced dataset, checkpoint, and result table; bump on breaking structure or meaning changes |
 | [logging](skills/logging/SKILL.md) | ISO 8601 timestamps, JSONL logs, timestamped status reports |
 | [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, per-minute progress, proactive monitoring and reporting |
+| [experiment-log](skills/experiment-log/SKILL.md) | datestamped `EXPERIMENTS.md` log of model and algorithm experiments and results |
 | [writing-style](skills/writing-style/SKILL.md) | plain prose, no Claudisms or padding |
 | [python-uv](skills/python-uv/SKILL.md) | `uv` for all Python dependency and script work |
 | [claude-model-defaults](skills/claude-model-defaults/SKILL.md) | default model IDs for code that calls Claude |

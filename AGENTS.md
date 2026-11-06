@@ -44,7 +44,7 @@ All work on remote repositories happens on feature branches, never directly on `
 Common types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`
 
 - **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in both remote repositories and session working folders. Don't let significant work accumulate uncommitted.
-- **Keep the remote branch current**: push feature-branch commits to the remote as you make them, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
+- **Keep published branches current**: once a feature branch is published (pushed to the remote), push each local commit to it as you make it, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
 
 ## Data safety
 
@@ -60,6 +60,26 @@ Scripts that write to or modify a database must always support two safety modes:
 Implement these as CLI flags (`--dry-run`, `--test-run`) or environment variables. Make it impossible to accidentally run the full destructive path without explicitly opting out of dry run.
 
 When space permits, stage outputs to a `./results/` folder and verify them before committing destructive changes.
+
+## Data contracts
+
+Data that code produces for later use — model weights and checkpoints, result tables, processed outputs — must carry a version. Logs are exempt.
+
+### The version
+
+- Define the version once in code, next to the code that writes the data (e.g. `RESULTS_SCHEMA_VERSION = 3`). One constant per kind of output.
+- Write it into the data itself, not only the filename: a key in the checkpoint dict, a field in the file's metadata or header, a column in the table.
+- The version describes the data contract, not the code. It changes only when the answer to "will this break or mislead downstream users?" is yes:
+  - **Structure**: fields, columns, or tensors added, removed, renamed, retyped, or reshaped; file layout changes.
+  - **Semantic comparability**: the same field now means something different, so values from the old and new versions can't be compared directly — new units, normalization, coordinate frame, metric definition, preprocessing, or a model architecture whose weights don't load the old way.
+- Refactors, speedups, and bug fixes that leave the output structure and meaning unchanged do not change the version.
+- Use a single integer that only goes up. If you need to say what changed, keep a short changelog comment beside the constant (one line per version).
+
+### Responsibilities
+
+- Every developer who changes what gets written maintains the version. Bump it in the same commit as the change; a change to output structure or meaning without a bump is a bug.
+- Code that reads the data checks the version and fails with a clear error on a version it doesn't support (e.g. "checkpoint is v2, this code needs v3 — retrain"). Never silently load or compare data across versions.
+- When results from different versions end up side by side (tables, plots, experiment logs), record the version so the mismatch is visible.
 
 ## Logging
 
@@ -96,6 +116,19 @@ job, and both the job and the agent watching it have duties. Log lines follow th
   are reported as they complete, not only at the end of the chain.
 - **Set the next step up before waiting.** While a job runs, do the work that does not depend on its result (docs,
   tests, the analysis script that will read its output) so the result is used the moment it lands.
+
+## Experiment log
+
+When experimenting on a model or an algorithm, keep a datestamped experiment log: `EXPERIMENTS.md` at the top level of the session working folder, or of the project repo when the experiments live there.
+
+- One entry per experiment, newest last, headed `## YYYY-MM-DD HH:MM — <short title>`.
+- Each entry records what was tried and what happened:
+  - **Question / hypothesis**: what the experiment is meant to show.
+  - **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
+  - **Results**: the numbers, with paths to logs, checkpoints, and plots. Include negative and inconclusive results.
+  - **Takeaway**: what it means and what to try next.
+- Write the entry when the experiment starts and fill in results when it finishes, not after the fact. Commit the log with the code that produced the results.
+- `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 
 ## Writing documents
 
