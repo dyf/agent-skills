@@ -111,13 +111,21 @@ Code, plan, and experiment records only. Data, run outputs, and scratch files ar
                        in the session folder's outputs/20261106-<slug>/
 ```
 
-### OUTPUTS.md
+### EXPERIMENTS.md and OUTPUTS.md
 
-`OUTPUTS.md` is to the session's runs what `EXPERIMENTS.md` is to a tool's experiments. One entry per run folder, newest last, headed `## YYYYMMDD-<slug>` (the folder name), followed by a one-line title and a link to the folder. Write the entry when the run starts and complete it when the run ends.
+Each is a log: one brief entry per run folder, so a reader can scan what was done and what came of it without opening every folder.
 
-- **Standard run**: purpose, setup (code version, inputs, command), and outcome (what it produced, whether it was verified and applied per `data-safety`).
-- **Experiment in a session folder only**: the experiment entry format from `experiment-log` (question, setup, findings). This makes `OUTPUTS.md` the session's experiment log.
-- **Experiment on a tool**: purpose and a link to its record in the tool repo's `EXPERIMENTS.md`; the findings live there.
+- `OUTPUTS.md`, in a session folder's `outputs/`, logs every run in that session: standard runs and experiments. In a session folder only, it is also the session's experiment log.
+- `EXPERIMENTS.md`, in a tool repo's `experiments/`, logs every experiment on the tool. After the session-to-tool transition, it starts with a note linking back to the session `OUTPUTS.md` it grew from.
+
+Each entry, newest last:
+
+- **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
+- **Title and link**: a one-line title and a link to the run's folder (for a tool experiment in `OUTPUTS.md`, to its record in the tool repo; in `EXPERIMENTS.md`, also to its data in the session folder).
+- **Purpose**: a sentence or two on what the run is for, or the question an experiment answers.
+- **Results**: a brief summary of what came of it and what it means, including negative and inconclusive results, and for an experiment, what to try next. While the run is going, write "running" and see `SUMMARY.md`.
+
+Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts and fill in the results when it ends, not after the fact.
 
 ### SUMMARY.md
 
@@ -233,13 +241,7 @@ When experimenting on a model or an algorithm, keep a datestamped experiment log
 
 ### Log entries
 
-In either file, each experiment has one entry, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each experiment entry has:
-
-- **Question / hypothesis**: what the experiment is meant to show.
-- **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
-- **Findings**: a short summary of the results and what they mean, including negative and inconclusive results, and what to try next.
-
-Write the entry when the experiment starts and add the findings when it finishes, not after the fact.
+Each experiment gets one entry in the log (`OUTPUTS.md` or `EXPERIMENTS.md`), in the format defined in `workspace-layout` ("EXPERIMENTS.md and OUTPUTS.md"): heading, title and link, purpose, results. Write it when the experiment starts and add the results when it finishes.
 
 ### Experiment folders
 
@@ -250,11 +252,11 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 
 ### SUMMARY.md
 
-Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). For an experiment, when it finishes, also write the findings into its log entry.
+Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). When the experiment finishes, also write the results into its log entry.
 
 ### Upkeep
 
-- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the findings when it ends. Don't hold the experiment back for one commit at the end.
+- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the results when it ends. Don't hold the experiment back for one commit at the end.
 - Keep an experiment's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
 

@@ -24,13 +24,7 @@ When experimenting on a model or an algorithm, keep a datestamped experiment log
 
 ## Log entries
 
-In either file, each experiment has one entry, newest last, headed `## YYYYMMDD-<slug>` (the folder name, so headings and anchors are unique), followed by a one-line title and a link to the experiment's folder. Each experiment entry has:
-
-- **Question / hypothesis**: what the experiment is meant to show.
-- **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
-- **Findings**: a short summary of the results and what they mean, including negative and inconclusive results, and what to try next.
-
-Write the entry when the experiment starts and add the findings when it finishes, not after the fact.
+Each experiment gets one entry in the log (`OUTPUTS.md` or `EXPERIMENTS.md`), in the format defined in `workspace-layout` ("EXPERIMENTS.md and OUTPUTS.md"): heading, title and link, purpose, results. Write it when the experiment starts and add the results when it finishes.
 
 ## Experiment folders
 
@@ -41,10 +35,10 @@ One folder per experiment, named `YYYYMMDD-<slug>` (the date it started plus a 2
 
 ## SUMMARY.md
 
-Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). For an experiment, when it finishes, also write the findings into its log entry.
+Every experiment folder has a `SUMMARY.md`, as every run folder does. Its contents and update cadence are defined in `workspace-layout` ("SUMMARY.md"). When the experiment finishes, also write the results into its log entry.
 
 ## Upkeep
 
-- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the findings when it ends. Don't hold the experiment back for one commit at the end.
+- Commit often, as `git-workflow` requires: the entry when the experiment starts, `SUMMARY.md` as it changes, the results when it ends. Don't hold the experiment back for one commit at the end.
 - Keep an experiment's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
