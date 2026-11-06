@@ -19,6 +19,7 @@ ORDER = [
     "session-setup",
     "git-workflow",
     "data-safety",
+    "data-contracts",
     "logging",
     "long-running-tasks",
     "experiment-log",
