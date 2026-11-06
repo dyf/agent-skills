@@ -169,6 +169,17 @@ Prose should be clear and precise. Avoid:
 
 Unless the user asks for a particular tone, write plainly and directly.
 
+## README
+
+Every repository has a `README.md` at its root. If one is missing, create it.
+
+It covers two things, at a high level:
+
+- **Purpose**: what the repository is for and what problem it solves, in a few sentences.
+- **Usage**: how to use it — how to set it up, the main commands or entry points to run, and what goes in and comes out.
+
+Keep it short. It is an orientation, not full documentation: link to deeper docs, `PLAN.md`, or `experiments/EXPERIMENTS.md` rather than repeating them. Update it in the same commit as any change to what the repo does or how it is used. Prose follows the `writing-style` rules.
+
 ## Claude model defaults
 
 When writing code that calls Claude, default to `claude-opus-5-5` — the current high-capability, non-frontier model (powerful but not the most expensive tier). If a cheaper model is needed for cost reasons, use `claude-sonnet-5-5`. Only use `claude-fable-5-1` if explicitly asked for maximum capability.
