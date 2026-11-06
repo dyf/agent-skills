@@ -5,7 +5,8 @@ Standing rules for coding agents, packaged as [Agent Skills](https://agentskills
 | Skill | Covers |
 |-------|--------|
 | [session-setup](skills/session-setup/SKILL.md) | dated working folder, git init, venv, `data/` vs `tmp/`, `PLAN.md` |
-| [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit cadence |
+| [git-workflow](skills/git-workflow/SKILL.md) | feature branches, branch names, Conventional Commits, commit and push cadence |
+| [experiment-log](skills/experiment-log/SKILL.md) | datestamped `EXPERIMENTS.md` log of model and algorithm experiments and results |
 | [data-safety](skills/data-safety/SKILL.md) | no in-place overwrites, `--dry-run` / `--test-run` for database writes |
 | [logging](skills/logging/SKILL.md) | ISO 8601 timestamps, JSONL logs, timestamped status reports |
 | [long-running-tasks](skills/long-running-tasks/SKILL.md) | background jobs, per-minute progress, proactive monitoring and reporting |

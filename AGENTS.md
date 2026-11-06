@@ -44,7 +44,7 @@ All work on remote repositories happens on feature branches, never directly on `
 Common types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`
 
 - **Commit often**: commit after every major step (e.g. a working script, a completed transformation, a plan change), in both remote repositories and session working folders. Don't let significant work accumulate uncommitted.
-- **Keep the remote branch current**: push feature-branch commits to the remote as you make them, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
+- **Keep published branches current**: once a feature branch is published (pushed to the remote), push every local commit to it as you make them, not in one batch at the end. The remote should never lag far behind local work, so progress is visible and nothing is lost if the local copy goes away.
 
 ## Data safety
 
@@ -119,3 +119,16 @@ When writing code that calls Claude, default to `claude-opus-5-5` — the curren
   - Create envs: `uv venv`
   - Sync: `uv sync`
   - Never reach for `pip`, `pip install`, `python -m pip`, or `poetry` unless a project explicitly requires it.
+
+## Experiment log
+
+When experimenting on a model or an algorithm, keep a datestamped experiment log: `EXPERIMENTS.md` at the top level of the session working folder.
+
+- One entry per experiment, newest last, headed `## YYYY-MM-DD HH:MM — <short title>`.
+- Each entry records what was tried and what happened:
+  - **Question / hypothesis**: what the experiment is meant to show.
+  - **Setup**: code version (commit hash), config and changed parameters, data, seed, command run.
+  - **Results**: the numbers, with paths to logs, checkpoints, and plots. Include negative and inconclusive results.
+  - **Takeaway**: what it means and what to try next.
+- Write the entry when the experiment starts and fill in results when it finishes, not after the fact. Commit the log with the code that produced the results.
+- `PLAN.md` holds current thinking; the experiment log holds history. Don't duplicate one into the other.
