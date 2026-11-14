@@ -11,7 +11,7 @@ A job is any piece of work with its own run folder, from a data migration to a t
 
 The log is for scanning what was done and what came of it without opening every folder: one brief entry per job, newest last.
 
-- **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
+- **Heading**: `## YYYYMMDD-HHMM-<slug>`, the run folder's name, so headings and anchors are unique.
 - **Title and links**: a one-line title and a link to the job's `SUMMARY.md`. When a job's record and data are in different places (a tool repo and a session folder), link both, and the entries in both logs link to each other.
 - **Question**: a sentence or two on what the job answers or produces: the hypothesis it tests, or the result it must deliver.
 - **Results**: the headline numbers or outputs, condensed from `SUMMARY.md`.
@@ -25,7 +25,7 @@ Keep entries brief; everything else belongs in `SUMMARY.md`. Write the entry whe
 The one file a reader opens to understand a job, while it runs and after. It contains:
 
 - **Last updated**: ISO 8601 timestamp at the top, so a reader can tell how stale it is.
-- **Log entry**: a link to the job's entry, using the heading anchor (e.g. `../OUTPUTS.md#20261106-lr-warmup` or `../EXPERIMENTS.md#20261106-lr-warmup`).
+- **Log entry**: a link to the job's entry, using the heading anchor (e.g. `../OUTPUTS.md#20261106-1430-lr-warmup` or `../EXPERIMENTS.md#20261106-1430-lr-warmup`).
 - **Question**: what the job answers or produces, as in the log entry.
 - **Inputs, parameters, and code**: enough to rerun it: input data paths, full config, any random seeds, code version (commit hash, or tool name and version), and the exact command.
 - **Time**: start time, end time (or "running"), and duration so far or in total.
@@ -50,5 +50,5 @@ After a job finishes and its final conclusions and next steps are drafted, have 
 
 - The logs and `SUMMARY.md` are records, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply to them.
 - Commit as `git-workflow` requires, at milestones: the log entry and `SUMMARY.md` when the job starts, `SUMMARY.md` and the preliminary results and conclusions when a stage finishes or something notable happens, the final results, conclusions, and next steps when it ends, and the critique once resolved. Refreshing `SUMMARY.md` every ~10 minutes does not mean committing every ~10 minutes.
-- Keep a job's data in its own `outputs/<YYYYMMDD-slug>/` and don't move it, so the paths in the log stay valid.
+- Keep a job's data in its own `outputs/<YYYYMMDD-HHMM-slug>/` and don't move it, so the paths in the log stay valid.
 - `PLAN.md` holds current thinking; the logs hold history. Don't duplicate one into the other: next steps the plan adopts move into `PLAN.md`, and the log keeps them as proposed.
