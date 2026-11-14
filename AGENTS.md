@@ -2,7 +2,7 @@
 
 <!-- Generated from skills/*/SKILL.md by scripts/build_agents_md.py. Edit the skills, not this file. -->
 
-Workspace-level guidance for all agents. These are standing rules — follow them without being asked.
+Workspace-level guidance for all agents. These are standing rules â€” follow them without being asked.
 
 ## Workspace layout
 

@@ -39,7 +39,7 @@ Workspace-level guidance for all agents. These are standing rules — follow the
 
 
 def body(skill_md: Path) -> str:
-    text = skill_md.read_text()
+    text = skill_md.read_text(encoding="utf-8")
     text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S).strip()
     # Demote headings one level so each skill becomes a section, skipping fenced code.
     out, fenced = [], False
@@ -60,11 +60,11 @@ def build() -> str:
 def main() -> int:
     content = build()
     if "--check" in sys.argv:
-        if not OUT.exists() or OUT.read_text() != content:
+        if not OUT.exists() or OUT.read_text(encoding="utf-8") != content:
             print("AGENTS.md is out of date; run: uv run scripts/build_agents_md.py", file=sys.stderr)
             return 1
         return 0
-    OUT.write_text(content)
+    OUT.write_text(content, encoding="utf-8", newline="\n")
     print(f"wrote {OUT.relative_to(ROOT)}")
     return 0
 
