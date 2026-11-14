@@ -51,7 +51,7 @@ For other languages, follow the equivalent standard (e.g. `Cargo.toml` and `rust
 
 These are the complete layouts. Beyond them, add only what the language or tooling expects (e.g. `uv.lock`, `docs/`, `.github/`).
 
-Session folders never have an `experiments/` folder. Every job a session runs gets a run folder in `outputs/`, indexed by `outputs/OUTPUTS.md`. A **tool job** is one whose findings are about the tool (training, evaluation, ablations of it); its record lives in the tool repo instead, and only its data stays in the session folder.
+Session folders never have an `experiments/` folder. Every job a session runs gets a run folder in `outputs/`, indexed by `outputs/OUTPUTS.md`. A **tool job** is one whose conclusions are about the tool (training, evaluation, ablations of it); its record lives in the tool repo instead, and only its data stays in the session folder.
 
 Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-<slug>`: the date the job started plus a 2–4 word kebab-case slug (e.g. `20261106-lr-warmup`). A tool job uses the same name for its record in the tool repo and its data in the session folder. What goes in `OUTPUTS.md`, `EXPERIMENTS.md`, and each `SUMMARY.md` is defined in `job-logs`.
 
