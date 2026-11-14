@@ -25,7 +25,7 @@ Until that transition happens, there is no tool repository, and nothing goes any
 
 ## Session folders
 
-1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-<slug>`, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-aind-schema-migration`.
+1. Create a folder under the workspace root (the directory that holds your projects, e.g. `~/projects/`) named `YYYYMMDD-HHMM-<slug>`, the date and local 24-hour time the session started, where `<slug>` is 2–4 words (kebab-case) describing the task. Example: `20260820-0915-aind-schema-migration`.
 2. Initialize it as a git repo with `tmp/`, `data/`, and `.venv/` gitignored, `outputs/` gitignored except for its index and summary files (`OUTPUTS.md` and each `SUMMARY.md`), plus a `README.md` (see `readme`) and a `PLAN.md`:
    ```
    git init
@@ -58,7 +58,7 @@ Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYM
 ### Session folder, on its own
 
 ```
-20261106-<slug>/
+20261106-0915-<slug>/
   README.md                purpose and usage (see `readme`)
   PLAN.md                  this session's plan
   .gitignore               tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and SUMMARY.md files
@@ -79,7 +79,7 @@ Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYM
 The same, except that a tool job's record and `SUMMARY.md` live in the tool repo, and the session keeps only its data. Other jobs still have their `SUMMARY.md` here. `OUTPUTS.md` still indexes every run folder, and links each tool job to its record.
 
 ```
-20261106-<slug>/
+20261106-0915-<slug>/
   README.md                purpose and usage, naming the tool and its version or commit
   PLAN.md                  this session's task
   .gitignore               same as above
