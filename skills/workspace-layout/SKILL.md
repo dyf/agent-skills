@@ -13,13 +13,13 @@ Decide first where the work belongs:
 
 ## From session to tool
 
-Tools grow out of session experiments. Work starts in a session folder, and the job log (`outputs/OUTPUTS.md` and each job's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
+Tools grow out of session experiments. Work starts in a session folder, and the job log (`outputs/OUTPUTS.md` and each job's `outputs/<YYYYMMDD-HHMM-slug>/`) stays there until the code becomes a tool.
 
 Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
 
 1. Create the tool repository with its language's packaging conventions (below), a `README.md`, and a `PLAN.md`, and move the code into it.
 2. Start the tool repo's `experiments/EXPERIMENTS.md` with a note at the top, above the entries, linking back to the session folder's `outputs/OUTPUTS.md`, which stays where it is as history.
-3. From then on, sessions interact with the tool: each tool job's record (`SUMMARY.md` and configs) goes in the tool repo, and its data goes in the session folder under `outputs/<YYYYMMDD-slug>/`.
+3. From then on, sessions interact with the tool: each tool job's record (`SUMMARY.md` and configs) goes in the tool repo, and its data goes in the session folder under `outputs/<YYYYMMDD-HHMM-slug>/`.
 
 Until that transition happens, there is no tool repository, and nothing goes anywhere but the session folder.
 
@@ -53,25 +53,25 @@ These are the complete layouts. Beyond them, add only what the language or tooli
 
 Session folders never have an `experiments/` folder. Every job a session runs gets a run folder in `outputs/`, indexed by `outputs/OUTPUTS.md`. A **tool job** is one whose conclusions are about the tool (training, evaluation, ablations of it); its record lives in the tool repo instead, and only its data stays in the session folder.
 
-Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-<slug>`: the date the job started plus a 2–4 word kebab-case slug (e.g. `20261106-lr-warmup`). A tool job uses the same name for its record in the tool repo and its data in the session folder. What goes in `OUTPUTS.md`, `EXPERIMENTS.md`, and each `SUMMARY.md` is defined in `job-logs`.
+Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-HHMM-<slug>`: the date and local 24-hour time the job started plus a 2–4 word kebab-case slug (e.g. `20261106-1430-lr-warmup`), so run folders sort by start time and jobs started on the same day stay distinct. A tool job uses the same name for its record in the tool repo and its data in the session folder. What goes in `OUTPUTS.md`, `EXPERIMENTS.md`, and each `SUMMARY.md` is defined in `job-logs`.
 
 ### Session folder, on its own
 
 ```
 20261106-<slug>/
-  README.md            purpose and usage (see `readme`)
-  PLAN.md              this session's plan
-  .gitignore           tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and SUMMARY.md files
-  pyproject.toml       dependencies (from `uv init --bare`)
-  uv.lock              locked dependencies
-  .venv/               uv environment (gitignored)
-  *.py, *.ipynb        scripts and notebooks
-  data/                input data (gitignored)
+  README.md                purpose and usage (see `readme`)
+  PLAN.md                  this session's plan
+  .gitignore               tmp/, data/, .venv/, and outputs/ except OUTPUTS.md and SUMMARY.md files
+  pyproject.toml           dependencies (from `uv init --bare`)
+  uv.lock                  locked dependencies
+  .venv/                   uv environment (gitignored)
+  *.py, *.ipynb            scripts and notebooks
+  data/                    input data (gitignored)
   outputs/
-    OUTPUTS.md         the session's job log, indexing the run folders (tracked)
-    20261106-<slug>/   one job: SUMMARY.md (tracked) plus its outputs and logs, staged and
-                       verified per `data-safety`
-  tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
+    OUTPUTS.md             the session's job log, indexing the run folders (tracked)
+    20261106-1430-<slug>/  one job: SUMMARY.md (tracked) plus its outputs and logs, staged and
+                           verified per `data-safety`
+  tmp/                     transient files: downloads, intermediate outputs, debug dumps (gitignored)
 ```
 
 ### Session folder working on a tool
@@ -80,20 +80,20 @@ The same, except that a tool job's record and `SUMMARY.md` live in the tool repo
 
 ```
 20261106-<slug>/
-  README.md            purpose and usage, naming the tool and its version or commit
-  PLAN.md              this session's task
-  .gitignore           same as above
-  pyproject.toml       dependencies, including the tool
-  uv.lock              locked dependencies
-  .venv/               uv environment with the tool installed (gitignored)
-  *.py, *.ipynb        scripts and notebooks that drive the tool
-  data/                input data the tool reads (gitignored)
+  README.md                purpose and usage, naming the tool and its version or commit
+  PLAN.md                  this session's task
+  .gitignore               same as above
+  pyproject.toml           dependencies, including the tool
+  uv.lock                  locked dependencies
+  .venv/                   uv environment with the tool installed (gitignored)
+  *.py, *.ipynb            scripts and notebooks that drive the tool
+  data/                    input data the tool reads (gitignored)
   outputs/
-    OUTPUTS.md         the session's job log, indexing the run folders (tracked)
-    20261106-<slug>/   one job's outputs and logs, with its SUMMARY.md (tracked), or a tool
-                       job's data, named with the same slug as its record in the tool repo
-                       (gitignored)
-  tmp/                 transient files (gitignored)
+    OUTPUTS.md             the session's job log, indexing the run folders (tracked)
+    20261106-1430-<slug>/  one job's outputs and logs, with its SUMMARY.md (tracked), or a tool
+                           job's data, named the same as its record in the tool repo
+                           (gitignored)
+  tmp/                     transient files (gitignored)
 ```
 
 ### Tool repository
@@ -102,18 +102,18 @@ Code, plan, and job records only. Data, job outputs, and scratch files are never
 
 ```
 <tool>/
-  README.md            purpose and usage (see `readme`)
-  PLAN.md              the tool's direction
-  pyproject.toml       project file (or the language's equivalent)
-  uv.lock              locked dependencies
-  .gitignore           .venv/ and build artifacts
-  .venv/               uv development environment (gitignored)
-  src/<package>/       package code
-  tests/               tests
+  README.md                purpose and usage (see `readme`)
+  PLAN.md                  the tool's direction
+  pyproject.toml           project file (or the language's equivalent)
+  uv.lock                  locked dependencies
+  .gitignore               .venv/ and build artifacts
+  .venv/                   uv development environment (gitignored)
+  src/<package>/           package code
+  tests/                   tests
   experiments/
-    EXPERIMENTS.md     the tool's job log, starting with a link back to the session OUTPUTS.md it grew from
-    20261106-<slug>/   one tool job's record: SUMMARY.md and configs, with a link to its data
-                       in the session folder's outputs/20261106-<slug>/
+    EXPERIMENTS.md         the tool's job log, starting with a link back to the session OUTPUTS.md it grew from
+    20261106-1430-<slug>/  one tool job's record: SUMMARY.md and configs, with a link to its data
+                           in the session folder's outputs/20261106-1430-<slug>/
 ```
 
 ## PLAN.md
