@@ -7,13 +7,13 @@ description: Where work lives — dated session folders by default, plus a tool 
 
 Decide first where the work belongs:
 
-- **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, experiment log, data.
+- **Session folder only**: the default. For an immediate, short-lived task — a one-off analysis, a data pull, a migration, a quick investigation — and for early experiments that may later become a tool. Everything lives in the session folder: code, plan, job log, data.
 - **Session folder plus tool repository**: for work on a tool or model of your own that has its own repo (e.g. morphogen). Each session of work on the tool still gets its own session folder. The tool's code, plan, and experiment log live in the tool repo, on a feature branch per `git-workflow`; the data the session reads and writes lives in the session folder.
 - **Any other repository** (one you don't own, such as a shared library you contribute to, or a config repo like `agent-skills`): follow that repo's existing conventions. Don't add a `PLAN.md` or the folder layouts below, or restructure it to match the tool-repository rules. Keep your plan in a session folder for the task if one is needed.
 
 ## From session to tool
 
-Tools grow out of session experiments. Work starts in a session folder, and the experiment log (`outputs/OUTPUTS.md` and each experiment's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
+Tools grow out of session experiments. Work starts in a session folder, and the job log (`outputs/OUTPUTS.md` and each job's `outputs/<YYYYMMDD-slug>/`) stays there until the code becomes a tool.
 
 Make that transition deliberately, when the code needs to be reused, installed, or maintained beyond the session:
 
@@ -53,7 +53,7 @@ These are the complete layouts. Beyond them, add only what the language or tooli
 
 Session folders never have an `experiments/` folder. All of a session's runs, experiments included, go in `outputs/`, one folder per run, indexed by `outputs/OUTPUTS.md`.
 
-Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-<slug>`: the date the run started plus a 2–4 word kebab-case slug (e.g. `20261106-lr-warmup`). A tool experiment uses the same name for its record in the tool repo and its data in the session folder. What goes in `OUTPUTS.md`, `EXPERIMENTS.md`, and each `SUMMARY.md` is defined in `experiment-log`.
+Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYMMDD-<slug>`: the date the run started plus a 2–4 word kebab-case slug (e.g. `20261106-lr-warmup`). A tool experiment uses the same name for its record in the tool repo and its data in the session folder. What goes in `OUTPUTS.md`, `EXPERIMENTS.md`, and each `SUMMARY.md` is defined in `job-logs`.
 
 ### Session folder, on its own
 
@@ -68,7 +68,7 @@ Every run folder, in `outputs/` or a tool repo's `experiments/`, is named `YYYYM
   *.py, *.ipynb        scripts and notebooks
   data/                input data (gitignored)
   outputs/
-    OUTPUTS.md         index of the run folders, and the session's experiment log (tracked)
+    OUTPUTS.md         the session's job log, indexing the run folders (tracked)
     20261106-<slug>/   one run: SUMMARY.md (tracked) plus its outputs and logs. A standard run,
                        staged and verified per `data-safety`, or an experiment
   tmp/                 transient files: downloads, intermediate outputs, debug dumps (gitignored)
@@ -122,7 +122,7 @@ Keep a `PLAN.md` at the root of every session folder and every tool repository o
 
 - The file is the live plan: goal, approach, open questions, next steps.
 - Update it whenever the plan changes, not after the fact.
-- No changelog. History lives in git and the experiment log, not in the plan.
+- No changelog. History lives in git and the job logs, not in the plan.
 
 When a session works on a tool, the two plans have different scopes:
 

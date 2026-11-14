@@ -22,7 +22,7 @@ ORDER = [
     "data-contracts",
     "logging",
     "long-running-tasks",
-    "experiment-log",
+    "job-logs",
     "writing-style",
     "readme",
     "claude-model-defaults",
