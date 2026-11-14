@@ -21,4 +21,4 @@ Data that code produces for later use — model weights and checkpoints, result 
 
 - Every developer who changes what gets written maintains the version. Bump it in the same commit as the change; a change to output structure or meaning without a bump is a bug.
 - Code that reads the data checks the version and fails with a clear error on a version it doesn't support (e.g. "checkpoint is v2, this code needs v3 — retrain"). Never silently load or compare data across versions.
-- When results from different versions end up side by side (tables, plots, experiment logs), record the version so the mismatch is visible.
+- When results from different versions end up side by side (tables, plots, job logs), record the version so the mismatch is visible.
