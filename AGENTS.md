@@ -129,10 +129,10 @@ Each entry, newest last:
 - **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
 - **Title and link**: a one-line title and a link to the run's folder. For a tool experiment, the session's `OUTPUTS.md` entry links to the record in the tool repo, and the tool's `EXPERIMENTS.md` entry links to both the record and the data in the session folder.
 - **Purpose**: a sentence or two on what the run is for, or the question an experiment answers.
-- **Findings**: while the run is going, **Preliminary findings**: a sentence or two on what the results so far suggest and how confident that is, marked as running, with a link to `SUMMARY.md` for status. Revise it at milestones, not on every `SUMMARY.md` refresh. When the run ends, replace it with **Final findings**: what came of it and what it means, including negative and inconclusive results.
-- **Next experiments** (experiments only, once finished): the follow-up experiments the findings call for, one line each, after the adversarial critique in `experiment-log` has been addressed.
+- **Findings**: a sentence or two condensed from `SUMMARY.md`'s findings, labeled preliminary (revised at milestones) or final.
+- **Next experiments** (experiments only, once finished): one line each, condensed from `SUMMARY.md`.
 
-Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts, keep the preliminary findings current while it runs, and write the final findings when it ends, not after the fact.
+Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts, not after the fact.
 
 ### SUMMARY.md
 
@@ -144,9 +144,8 @@ Every run has exactly one `SUMMARY.md`. For a standard run or a session-only exp
 - **Inputs, parameters, and code**: input data paths, parameters and config, the code version (commit hash, or tool name and version), and the exact command.
 - **Time**: start time, end time (or "running"), and duration so far or in total.
 - **Status**: what has completed, what is still running or queued (with progress, e.g. `step 4500/8000`), and anything that failed. When the run ends, mark it finished or failed.
-- **Findings**: while the run is going, **Preliminary findings**: what the results so far suggest, the evidence behind each point, and how confident that is. When the run ends, replace them with **Final findings**: the conclusions the finished run supports, with the numbers behind them, how confident each is, and what the run did not settle.
-- **Next experiments** (experiments only, once finished): proposed follow-ups, each with the question it answers, why the findings call for it, and roughly what it costs to run.
-- **Critique** (experiments only, once finished): the adversarial reviewers' objections to the findings and next experiments, and how each was resolved, as described in `experiment-log`.
+- **Findings**: while the run is going, **Preliminary findings**: what the results so far suggest, the evidence, and how confident that is. When it ends, **Final findings**: the conclusions it supports, the numbers behind them, and what it did not settle.
+- **Next experiments** and **Critique** (experiments only, once finished): see `experiment-log`.
 
 `SUMMARY.md`, `OUTPUTS.md`, and `EXPERIMENTS.md` are records, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply to them. Overwrite `SUMMARY.md` in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends. Commit it at milestones (start, stage done, end), not on every refresh.
 
@@ -224,9 +223,9 @@ Anything that runs for more than a couple of minutes (training, sampling, bulk d
 - **The job logs progress as `logging` requires** (cadence, timestamps, JSONL). For a long job, make the progress convertible into an ETA (`step 4500/8000`, `neurons 120/216`, bytes or rows done), and add the rate or the ETA itself when it is cheap to compute. A job that is silent for several minutes is indistinguishable from a hung one.
 - **Run it in the background, logging to a file** in the run's session folder, under `outputs/<YYYYMMDD-slug>/`, for every kind of run: standard runs and experiments alike. Never run it in a foreground call that blocks the session or is killed by a timeout.
 - **The agent monitors the log and reports without being asked.** Post a short progress summary every few minutes — one or two lines: the time, where the job is, the rate, the ETA, anything unusual (a loss that stopped falling, a stage that is slower than expected, a warning). Do this on a schedule, not only when the job finishes, so the user never has to ask for a status update. Use a monitor on the log file when one is available rather than polling by hand.
-- **Keep the run's `SUMMARY.md` current** (see `workspace-layout`), including its preliminary findings, every ~10 minutes by default and once more when the job ends.
+- **Keep the run's `SUMMARY.md` current** (see `workspace-layout`), every ~10 minutes by default and once more when the job ends.
 - **If the log goes quiet**, say so and check whether the process is alive before assuming it is working.
-- **When the job ends**, report the outcome in one message that stands on its own: whether it succeeded, how long it took, where the outputs are, the headline numbers, and what happens next. For an experiment, what happens next includes the adversarial critique in `experiment-log`. Chained stages (train → sample → score) are reported as they complete, not only at the end of the chain.
+- **When the job ends**, report the outcome in one message that stands on its own: whether it succeeded, how long it took, where the outputs are, the headline numbers, and what happens next. Chained stages (train → sample → score) are reported as they complete, not only at the end of the chain.
 - **Set the next step up before waiting.** While a job runs, do the work that does not depend on its result (docs, tests, the analysis script that will read its output) so the result is used the moment it lands.
 
 ## Experiment log
@@ -243,8 +242,8 @@ On top of the general rules for log entries and `SUMMARY.md`:
 - **Purpose** states the question or hypothesis the experiment tests.
 - **Inputs, parameters, and code** in `SUMMARY.md` are specific enough to rerun the experiment: commit hash, full config, seed, and exact command.
 - Write the log entry when the experiment starts, not after it worked out.
-- **While it runs**, the log entry and `SUMMARY.md` carry **Preliminary findings**: what the results so far suggest about the hypothesis and how confident that is. Keep them current as stages finish and as new results arrive, so a reader can see where the experiment is heading before it ends. Label them preliminary; don't state them as conclusions.
-- **When it ends**, replace them with **Final findings**: the answer to the question, including negative and inconclusive outcomes, not only wins, and the evidence for it. Then propose **Next experiments**: the follow-ups the findings call for, each with the question it answers and why.
+- **Findings** answer the hypothesis, and final findings report negative and inconclusive outcomes as well as wins.
+- **Next experiments** are required once the experiment ends: each with the question it answers, why the findings call for it, and its rough cost. They are final only after the critique below.
 
 ### Adversarial critique
 
@@ -253,7 +252,7 @@ After an experiment finishes and its final findings and next experiments are dra
 1. **Launch reviewers.** Start at least one adversarial agent (a subagent or separate session with fresh context, not the agent that ran the experiment), and preferably two or three with different angles: one on the findings, one on the next experiments. Give them the `SUMMARY.md`, the log entry, and access to the outputs and code, and ask them to argue against the conclusions, not to confirm them.
 2. **What they attack.** For the findings: whether the evidence supports the claim, confounds, leakage or train/eval contamination, too few seeds or samples, metric choice, cherry-picked examples, comparisons across data or schema versions, and alternative explanations. For the next experiments: whether each one would actually answer its question, whether a cheaper or more decisive experiment exists, what is missing (controls, baselines, ablations), and whether the list follows from the findings or just from momentum.
 3. **Resolve each objection.** Check it against the data, running a quick analysis if needed. Then accept it and revise the findings or next experiments, or reject it with a stated reason. Don't drop objections silently.
-4. **Record it.** Put the objections and their resolutions in `SUMMARY.md` under **Critique**, and note in the log entry any finding or next experiment the critique changed. The log's final findings and next experiments are the post-critique versions.
+4. **Record it.** Put the objections and their resolutions in `SUMMARY.md` under **Critique**, and update the log entry to the post-critique findings and next experiments.
 
 ### Upkeep
 

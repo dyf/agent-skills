@@ -128,10 +128,10 @@ Each entry, newest last:
 - **Heading**: `## YYYYMMDD-<slug>`, the run folder's name, so headings and anchors are unique.
 - **Title and link**: a one-line title and a link to the run's folder. For a tool experiment, the session's `OUTPUTS.md` entry links to the record in the tool repo, and the tool's `EXPERIMENTS.md` entry links to both the record and the data in the session folder.
 - **Purpose**: a sentence or two on what the run is for, or the question an experiment answers.
-- **Findings**: while the run is going, **Preliminary findings**: a sentence or two on what the results so far suggest and how confident that is, marked as running, with a link to `SUMMARY.md` for status. Revise it at milestones, not on every `SUMMARY.md` refresh. When the run ends, replace it with **Final findings**: what came of it and what it means, including negative and inconclusive results.
-- **Next experiments** (experiments only, once finished): the follow-up experiments the findings call for, one line each, after the adversarial critique in `experiment-log` has been addressed.
+- **Findings**: a sentence or two condensed from `SUMMARY.md`'s findings, labeled preliminary (revised at milestones) or final.
+- **Next experiments** (experiments only, once finished): one line each, condensed from `SUMMARY.md`.
 
-Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts, keep the preliminary findings current while it runs, and write the final findings when it ends, not after the fact.
+Keep entries brief. Inputs, parameters, code, timing, and status belong in the run's `SUMMARY.md`, not here. Write the entry when the run starts, not after the fact.
 
 ## SUMMARY.md
 
@@ -143,9 +143,8 @@ Every run has exactly one `SUMMARY.md`. For a standard run or a session-only exp
 - **Inputs, parameters, and code**: input data paths, parameters and config, the code version (commit hash, or tool name and version), and the exact command.
 - **Time**: start time, end time (or "running"), and duration so far or in total.
 - **Status**: what has completed, what is still running or queued (with progress, e.g. `step 4500/8000`), and anything that failed. When the run ends, mark it finished or failed.
-- **Findings**: while the run is going, **Preliminary findings**: what the results so far suggest, the evidence behind each point, and how confident that is. When the run ends, replace them with **Final findings**: the conclusions the finished run supports, with the numbers behind them, how confident each is, and what the run did not settle.
-- **Next experiments** (experiments only, once finished): proposed follow-ups, each with the question it answers, why the findings call for it, and roughly what it costs to run.
-- **Critique** (experiments only, once finished): the adversarial reviewers' objections to the findings and next experiments, and how each was resolved, as described in `experiment-log`.
+- **Findings**: while the run is going, **Preliminary findings**: what the results so far suggest, the evidence, and how confident that is. When it ends, **Final findings**: the conclusions it supports, the numbers behind them, and what it did not settle.
+- **Next experiments** and **Critique** (experiments only, once finished): see `experiment-log`.
 
 `SUMMARY.md`, `OUTPUTS.md`, and `EXPERIMENTS.md` are records, not data: the no-overwrite rule in `data-safety` and the versioning in `data-contracts` don't apply to them. Overwrite `SUMMARY.md` in place, as a current snapshot, not an append-only history. Update it at a cadence that matches how fast the run produces new information, every ~10 minutes by default, and once more when it ends. Commit it at milestones (start, stage done, end), not on every refresh.
 
